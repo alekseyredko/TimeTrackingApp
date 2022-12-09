@@ -1,0 +1,20 @@
+﻿@page "/"
+@using TimeTrackingApp.Shared.TrackingEventComponents
+@using TimeTrackingApp.Shared.TrackingEventTypeComponents
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+@code {
+    protected override void OnInitialized()
+    {
+        try
+        {
+            NavigationManager.NavigateTo("/dashboard");
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+}

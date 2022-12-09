@@ -1,0 +1,26 @@
+﻿@using TimeTrackingApp.Core.Services.Interfaces;
+@using TimeTrackingApp.Domain.Entities;
+
+<h4>TimeTrackComponent</h4>
+
+<TimeComponent @bind-Show="show"/>
+<button class="btn btn-primary" @onclick="Show">Show</button>
+
+@code {
+    private bool show;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    private void Show()
+    {
+        show = !show;        
+    }
+}

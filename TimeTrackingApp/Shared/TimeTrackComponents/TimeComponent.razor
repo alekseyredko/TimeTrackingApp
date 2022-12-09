@@ -1,0 +1,70 @@
+﻿@using TimeTrackingApp.Core.Services.Interfaces;
+@using TimeTrackingApp.Domain.Entities;
+@using System.Timers;
+@implements IDisposable;
+
+<p>@_currentDateTime</p>
+<p>@Show</p>
+
+@code {
+    private Timer _timer = new Timer(1000);
+    private TimeSpan _currentDateTime;
+
+    [Inject]
+    private ITimeTrackingService TimeTrackingService { get; set; }
+
+    private bool _show;      
+
+    [Parameter]
+    public bool Show
+    {
+        get { return _show; }
+        set 
+        { 
+            _show = value;
+            StartOrStopTimer(_show);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> ShowChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    private void OnTimerCallback(object sender, ElapsedEventArgs e)
+    {
+        _ = InvokeAsync(() =>
+        {
+            _currentDateTime = _currentDateTime.Add(TimeSpan.FromSeconds(1));
+            StateHasChanged();
+        });
+    }
+
+    public void StartOrStopTimer(bool start)
+    {             
+        if (start)
+        {
+            _timer.Elapsed += OnTimerCallback;
+            _timer.Start();
+        }
+        else
+        {
+            _timer.Stop();
+            _timer.Elapsed -= OnTimerCallback;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+    }
+}

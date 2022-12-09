@@ -1,0 +1,25 @@
+﻿@page "/dashboard"
+@using TimeTrackingApp.Shared.TimeTrackComponents
+@using TimeTrackingApp.Shared.TrackingEventComponents
+@using TimeTrackingApp.Shared.TrackingEventTypeComponents
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="container-fill d-flex flex-wrap align-content-start gap-4">
+    <div class="rounded border w-auto p-2">
+        <TimeTrackComponent />
+    </div>
+    
+    <div class="rounded border w-auto p-2">
+        <TrackingEventTypeComponent/>
+    </div>   
+
+      <div class="rounded border w-auto p-2">
+        <TrackingEventComponent/>
+    </div>   
+</div>
+
+
+@code {
+
+}

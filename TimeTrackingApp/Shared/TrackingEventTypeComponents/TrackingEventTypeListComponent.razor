@@ -1,0 +1,76 @@
+﻿@using TimeTrackingApp.Domain.Entities;
+
+@if (TrackingEventTypes == null)
+{
+    <div class="d-flex align-items-center">
+        <strong>Loading...</strong>
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+    </div>
+}
+else
+{
+    <div class="accordion" id="trackingEventTypes">
+        @for (int i = 0; i < TrackingEventTypes.Count; i++)
+        {
+            int trackingEventTypeNumber = i;
+            <div class="accordion-item" @key="TrackingEventTypes[i]">
+                <h2 class="accordion-header" id="@($"headingTrackingEventType{i}")">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@($"collapseTrackingEventType{i}")" aria-expanded="true" aria-controls="@($"collapseTrackingEventType{i}")">
+                        @TrackingEventTypes[i].EventType
+                    </button>
+                </h2>
+                <div id="@($"collapseTrackingEventType{i}")" class="accordion-collapse collapse" aria-labelledby="@($"headingTrackingEventType{i}")" data-bs-parent="#trackingEventTypes">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <strong class="col">@TrackingEventTypes[i].Description</strong>
+                            <button class="btn btn-danger col" @onclick="async e => await OnDeleteAsync(TrackingEventTypes[trackingEventTypeNumber].Id)">Delete</button>
+                        </div>
+                        <div class="row d-flex align-content-start flex-wrap gap-1">
+                            @foreach (TrackingEvent trackingEvent in TrackingEventTypes[i].TrackingEvents)
+                            {
+                                <span class="badge rounded border text-bg-light">@trackingEvent.Description</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="container mb-3">
+        <h5 class="mb-3">Add new tracking event type here</h5>
+        <div class="mb-3">
+            <label for="eventTypeInput" class="form-label">Event type</label>
+            <input type="text" class="form-control" id="eventTypeInput" @bind="@_eventType">
+        </div>
+        <div class="mb-3">
+            <label for="eventDescriptionInput" class="form-label">Description</label>
+            <input type="text" class="form-control" id="eventDescriptionInput" @bind="_eventDescription">
+        </div>
+        <button type="submit" class="btn btn-primary" @onclick="async e => await OnAddEntityAsync(_eventType, _eventDescription)">Submit</button>     
+    </div>
+}
+
+@code {
+    private string _eventType;
+    private string _eventDescription;  
+
+    [Parameter]
+    public List<TrackingEventType> TrackingEventTypes { get; set; }
+
+    [Parameter]
+    public EventCallback<TrackingEventType> EntityChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int> EntityIdChanged { get; set; }
+
+    private async Task OnAddEntityAsync(string eventType, string eventTypeDescripyion)
+    {
+        await EntityChanged.InvokeAsync(new TrackingEventType { EventType = eventType, Description = eventTypeDescripyion, TrackingEvents = new List<TrackingEvent>() });
+    }
+
+    private async Task OnDeleteAsync(int id)
+    {      
+        await EntityIdChanged.InvokeAsync(id);
+    }
+}

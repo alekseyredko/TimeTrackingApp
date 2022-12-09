@@ -1,0 +1,42 @@
+﻿@using TimeTrackingApp.Core.Services.Interfaces;
+@using TimeTrackingApp.Domain.Entities;
+
+<h4>TrackingEventTypeComponent</h4>
+
+<TrackingEventTypeListComponent 
+    TrackingEventTypes="_trackingEventTypes"    
+    EntityIdChanged="async id => await OnDeleteAsync(id)"
+    EntityChanged="async entity => await OnAddAsync(entity)" />
+
+@code {
+    private List<TrackingEventType> _trackingEventTypes;
+
+    [Inject]
+    private ITimeTrackingService _timeTrackingService { get; set; }
+
+    [Inject]
+    private IHostApplicationLifetime _applicationLifetime { get; set; }
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_trackingEventTypes == null)
+        {
+            _trackingEventTypes = (await _timeTrackingService.GetAllTrackingEventTypes(_applicationLifetime.ApplicationStopping)).ToList();
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OnAddAsync(TrackingEventType entity)
+    {        
+        TrackingEventType newTrackingEventType = await _timeTrackingService.AddTrackingEventTypeAsync(entity, _applicationLifetime.ApplicationStopping);
+        _trackingEventTypes.Add(newTrackingEventType);
+    }
+
+    private async Task OnDeleteAsync(int id)
+    {
+        await _timeTrackingService.DeleteTrackingEventTypeAsync(id, _applicationLifetime.ApplicationStopping);
+        _trackingEventTypes.Remove(_trackingEventTypes.First(x => x.Id == id));
+    }
+}
