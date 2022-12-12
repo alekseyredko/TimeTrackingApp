@@ -29,7 +29,7 @@ namespace TimeTrackingApp.Core.Services
             return await unitOfWork.TrackingEventRepository.GetAsync(entity => entity.TimeTracks.Any(x => !x.IsFinished), cancellationToken, nameof(TrackingEvent.TimeTracks), nameof(TrackingEvent.TrackingEventType));
         }
 
-        public async Task<ICollection<TrackingEvent>> GetTrackingEventsAsync(CancellationToken cancellationToken)
+        public async Task<List<TrackingEvent>> GetTrackingEventsAsync(CancellationToken cancellationToken)
         {
             using IUnitOfWork unitOfWork = await _unitOfWorkFactory.CreateUnitOfWorkAsync(cancellationToken);
             return (await unitOfWork.TrackingEventRepository.GetListOfEntitiesAsync(cancellationToken, null, nameof(TrackingEvent.TrackingEventType))).ToList();
@@ -74,14 +74,14 @@ namespace TimeTrackingApp.Core.Services
 
             await unitOfWork.SaveChangesAsync();
 
-            return timeTrack;
+            return await this.GetCurrentActiveTimeTrackAsync(cancellationToken);            
         }
 
         public async Task<TimeTrack> StopCurrentTimeTrackAsync(CancellationToken cancellationToken)
         {
             using IUnitOfWork unitOfWork = await _unitOfWorkFactory.CreateUnitOfWorkAsync(cancellationToken);
 
-            TimeTrack timeTrack = await unitOfWork.TimeTrackRepository.GetAsync(entity => !entity.IsFinished, cancellationToken);
+            TimeTrack timeTrack = await unitOfWork.TimeTrackRepository.GetAsync(entity => !entity.IsFinished, cancellationToken, nameof(TimeTrack.TrackingEvent));
 
             timeTrack.StopTimeTrack();
 
@@ -108,6 +108,21 @@ namespace TimeTrackingApp.Core.Services
             await unitOfWork.TrackingEventRepository.RemoveAsync(id, cancellationToken);
 
             await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteTimeTrackAsync(int id, CancellationToken cancellationToken)
+        {
+            using IUnitOfWork unitOfWork = await _unitOfWorkFactory.CreateUnitOfWorkAsync(cancellationToken);
+
+            await unitOfWork.TimeTrackRepository.RemoveAsync(id, cancellationToken);
+
+            await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<List<TimeTrack>> GetFinishedTimeTracksAsync(CancellationToken cancellationToken)
+        {
+            using IUnitOfWork unitOfWork = await _unitOfWorkFactory.CreateUnitOfWorkAsync(cancellationToken);
+            return (await unitOfWork.TimeTrackRepository.GetListOfEntitiesAsync(cancellationToken, entity => entity.IsFinished, nameof(TimeTrack.TrackingEvent))).ToList();
         }
     }
 }

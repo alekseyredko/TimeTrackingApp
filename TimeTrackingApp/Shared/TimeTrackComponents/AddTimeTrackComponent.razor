@@ -1,0 +1,40 @@
+﻿@using TimeTrackingApp.Domain.Entities;
+
+<div class="container mb-3">
+    <h5 class="mb-3">Add new time track here</h5>
+  
+    @if (TrackingEvents != null)
+    {
+        <select class="form-select mb-3" @bind="TrackingEventId">
+            @foreach (TrackingEvent trackingEvent in TrackingEvents)
+            {
+                <option value="@trackingEvent.Id">@trackingEvent.Description</option>
+            }
+        </select>
+    }
+
+    <button class="btn btn-primary" @onclick="OnAddEntityAsync">Submit</button>
+</div>
+
+@code {
+    [Parameter]
+    public int TrackingEventId { get; set; }
+
+    [Parameter]
+    public List<TrackingEvent> TrackingEvents { get; set; }
+
+    [Parameter]
+    public EventCallback<int> TrackingEventIdChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<List<TrackingEvent>> TrackingEventsChanged { get; set; }
+
+    [Parameter]
+    public EventCallback TimeTrackAdded { get; set; }
+
+    public async Task OnAddEntityAsync()
+    {       
+        await TrackingEventIdChanged.InvokeAsync(TrackingEventId);
+        await TimeTrackAdded.InvokeAsync();
+    }
+}

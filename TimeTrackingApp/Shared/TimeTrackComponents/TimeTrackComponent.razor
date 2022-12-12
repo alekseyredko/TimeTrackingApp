@@ -3,24 +3,80 @@
 
 <h4>TimeTrackComponent</h4>
 
-<TimeComponent @bind-Show="show"/>
-<button class="btn btn-primary" @onclick="Show">Show</button>
+<TimeComponent @bind-ShowTrackTime="showTrackTime"/>
+
+<ListComponent
+    @bind-Items="timeTracks"
+    @bind-Item="selectedTimeTrack"
+    ItemToDeleteSelected="OnDeleteEntityAsync">
+    <ItemHeader>
+        @context.TrackingEvent.Description
+    </ItemHeader>
+    <ItemContent>
+        <div class="container">
+            <p class="row">@context.StartTrackTime</p>
+            <p class="row">@context.EndTrackTime</p>
+            <p class="row">@context.Duration</p>
+        </div>
+    </ItemContent>
+</ListComponent>
+
+@if (showTrackTime)
+{
+    <button class="btn btn-primary" @onclick="OnStopTimeTrackAsync">Stop</button>    
+}
+else
+{
+    <AddTimeTrackComponent 
+        @bind-TrackingEventId="trackingEventId"
+        @bind-TrackingEvents="trackingEvents"
+        TimeTrackAdded="OnAddEntityAsync" />
+}
 
 @code {
-    private bool show;
+    private bool showTrackTime;
 
-    protected override void OnInitialized()
+    private List<TimeTrack> timeTracks;
+
+    private int trackingEventId = -1;
+
+    private TimeTrack selectedTimeTrack;
+
+    private List<TrackingEvent> trackingEvents;
+
+    [Inject]
+    private ITimeTrackingService TimeTrackingService { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        timeTracks = await TimeTrackingService.GetFinishedTimeTracksAsync(CancellationToken.None);
+        trackingEvents = await TimeTrackingService.GetTrackingEventsAsync(CancellationToken.None);
+        await base.OnInitializedAsync();
+    }  
+
+    private async Task OnAddEntityAsync()
+    {
+        TimeTrack newTimeTrack = await TimeTrackingService.StartTimeTrackAsync(trackingEventId, CancellationToken.None);
+        timeTracks.Add(newTimeTrack);
+
+        showTrackTime = true;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    private async Task OnDeleteEntityAsync()
     {
-        base.OnAfterRender(firstRender);
+        await TimeTrackingService.DeleteTimeTrackAsync(selectedTimeTrack.Id, CancellationToken.None);
+        timeTracks.Remove(selectedTimeTrack);
     }
 
-    private void Show()
+    private async Task OnStopTimeTrackAsync()
     {
-        show = !show;        
+        TimeTrack stoppedTimeTrack = await TimeTrackingService.StopCurrentTimeTrackAsync(CancellationToken.None);
+        TimeTrack foundTimeTrack = timeTracks.First(x => x.Id == stoppedTimeTrack.Id);
+        foundTimeTrack.EndTrackTime = stoppedTimeTrack.EndTrackTime;
+        foundTimeTrack.Duration = stoppedTimeTrack.Duration;
+        foundTimeTrack.IsFinished = stoppedTimeTrack.IsFinished;
+        foundTimeTrack.TrackingEvent = stoppedTimeTrack.TrackingEvent;
+
+        showTrackTime = false;
     }
 }

@@ -3,12 +3,12 @@
 @using System.Timers;
 @implements IDisposable;
 
-<p>@_currentDateTime</p>
-<p>@Show</p>
+<p>@_elapsed</p>
+<p>@ShowTrackTime</p>
 
 @code {
-    private Timer _timer = new Timer(1000);
-    private TimeSpan _currentDateTime;
+    private Timer _timer = new Timer(10);
+    private TimeSpan _elapsed;
 
     [Inject]
     private ITimeTrackingService TimeTrackingService { get; set; }
@@ -16,7 +16,7 @@
     private bool _show;      
 
     [Parameter]
-    public bool Show
+    public bool ShowTrackTime
     {
         get { return _show; }
         set 
@@ -27,23 +27,13 @@
     }
 
     [Parameter]
-    public EventCallback<bool> ShowChanged { get; set; }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-    }
+    public EventCallback<bool> ShowTrackTimeChanged { get; set; }
 
     private void OnTimerCallback(object sender, ElapsedEventArgs e)
     {
         _ = InvokeAsync(() =>
         {
-            _currentDateTime = _currentDateTime.Add(TimeSpan.FromSeconds(1));
+            _elapsed = _elapsed.Add(TimeSpan.FromMilliseconds(10));
             StateHasChanged();
         });
     }
@@ -58,6 +48,7 @@
         else
         {
             _timer.Stop();
+            _elapsed = new TimeSpan();
             _timer.Elapsed -= OnTimerCallback;
             StateHasChanged();
         }
