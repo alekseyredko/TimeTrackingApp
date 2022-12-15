@@ -1,22 +1,25 @@
 ﻿@using TimeTrackingApp.Core.Services.Interfaces;
 @using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Models;
 
 <h4>TrackingEventTypeComponent</h4>
 
 <TrackingEventTypeListComponent 
     TrackingEventTypes="_trackingEventTypes"    
-    EntityIdChanged="async id => await OnDeleteAsync(id)"
-    EntityChanged="async entity => await OnAddAsync(entity)" />
+    EntityIdChanged="async id => await OnDeleteAsync(id)"    
+    AddTrackingEventTypeModelChanged="OnAddAsync"/>
 
 @code {
     private List<TrackingEventType> _trackingEventTypes;
+
+    private AddTrackingEventTypeModel _addTrackingEventTypeModel = new AddTrackingEventTypeModel();
 
     [Inject]
     private ITimeTrackingService _timeTrackingService { get; set; }
 
     [Inject]
     private IHostApplicationLifetime _applicationLifetime { get; set; }
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -28,9 +31,15 @@
         await base.OnInitializedAsync();
     }
 
-    private async Task OnAddAsync(TrackingEventType entity)
-    {        
-        TrackingEventType newTrackingEventType = await _timeTrackingService.AddTrackingEventTypeAsync(entity, _applicationLifetime.ApplicationStopping);
+    private async Task OnAddAsync(AddTrackingEventTypeModel addTrackingEventTypeModel)
+    {
+        TrackingEventType trackingEventType = new TrackingEventType
+            {
+                EventType = addTrackingEventTypeModel.EventType,
+                Description = addTrackingEventTypeModel.Description,
+                TrackingEvents = new List<TrackingEvent>()
+            };
+        TrackingEventType newTrackingEventType = await _timeTrackingService.AddTrackingEventTypeAsync(trackingEventType, _applicationLifetime.ApplicationStopping);
         _trackingEventTypes.Add(newTrackingEventType);
     }
 

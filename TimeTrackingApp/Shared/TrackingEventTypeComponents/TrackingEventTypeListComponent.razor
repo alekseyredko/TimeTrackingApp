@@ -1,4 +1,5 @@
 ﻿@using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Models;
 
 @if (TrackingEventTypes == null)
 {
@@ -39,38 +40,47 @@ else
 
     <div class="container mb-3">
         <h5 class="mb-3">Add new tracking event type here</h5>
-        <div class="mb-3">
-            <label for="eventTypeInput" class="form-label">Event type</label>
-            <input type="text" class="form-control" id="eventTypeInput" @bind="@_eventType">
-        </div>
-        <div class="mb-3">
-            <label for="eventDescriptionInput" class="form-label">Description</label>
-            <input type="text" class="form-control" id="eventDescriptionInput" @bind="_eventDescription">
-        </div>
-        <button type="submit" class="btn btn-primary" @onclick="async e => await OnAddEntityAsync(_eventType, _eventDescription)">Submit</button>     
+        <EditForm Model="@AddTrackingEventTypeModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <label for="eventType" class="form-label">Event type</label>
+            <InputText id="eventType" class="form-control mb-3" 
+                @bind-Value="AddTrackingEventTypeModel.EventType"
+                DisplayName="Event Type"/>
+
+            <label for="description" class="form-label">Description</label>
+            <InputText id="description" class="form-control mb-3" 
+                @bind-Value="AddTrackingEventTypeModel.Description"
+                DisplayName="Description"/>
+
+            <button type="submit" class="btn btn-primary mb-3">Submit</button>
+        </EditForm>
     </div>
 }
 
 @code {
-    private string _eventType;
-    private string _eventDescription;  
+    [Parameter]
+    public AddTrackingEventTypeModel AddTrackingEventTypeModel { get; set; } = new AddTrackingEventTypeModel();
+
+    [Parameter]
+    public EventCallback<AddTrackingEventTypeModel> AddTrackingEventTypeModelChanged{ get; set; }
 
     [Parameter]
     public List<TrackingEventType> TrackingEventTypes { get; set; }
 
     [Parameter]
-    public EventCallback<TrackingEventType> EntityChanged { get; set; }
-
-    [Parameter]
     public EventCallback<int> EntityIdChanged { get; set; }
 
-    private async Task OnAddEntityAsync(string eventType, string eventTypeDescripyion)
-    {
-        await EntityChanged.InvokeAsync(new TrackingEventType { EventType = eventType, Description = eventTypeDescripyion, TrackingEvents = new List<TrackingEvent>() });
-    }
 
     private async Task OnDeleteAsync(int id)
     {      
         await EntityIdChanged.InvokeAsync(id);
     }
+
+    private async Task HandleValidSubmit()
+    {
+        await AddTrackingEventTypeModelChanged.InvokeAsync(AddTrackingEventTypeModel);
+        AddTrackingEventTypeModel = new AddTrackingEventTypeModel();
+    }    
 }
