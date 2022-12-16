@@ -2,15 +2,30 @@
 @using TimeTrackingApp.Shared.TrackingEventComponents
 @using TimeTrackingApp.Shared.TrackingEventTypeComponents
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Index</PageTitle>
 
+<AuthorizeView>
+    <Authorized>
+        <p>Authorized</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Not Authorized</p>
+    </NotAuthorized>
+</AuthorizeView>
+
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-            NavigationManager.NavigateTo("/dashboard");
+            AuthenticationState authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if(authenticationState.User.Identity.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/dashboard");
+            }
         }
         catch (Exception)
         {

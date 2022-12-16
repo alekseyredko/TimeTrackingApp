@@ -2,7 +2,7 @@
 
 <PageTitle>TimeTrackingApp</PageTitle>
 
-<div class="page"> 
+<div class="page">
     <main>
         <nav class="navbar navbar-expand-lg bg-light">
             <div class="container-fluid">
@@ -15,19 +15,25 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Features</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled">@DateTime.Now</a>
-                        </li>
+                        <AuthorizeView>
+                            <Authorized>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="Identity/Account/Logout">Logout</a>
+                                </li>
+                            </Authorized>
+                            <NotAuthorized>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="Identity/Account/Login">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="Identity/Account/Register">Register</a>
+                                </li>
+                            </NotAuthorized>
+                        </AuthorizeView>
                     </ul>
                 </div>
             </div>
-        </nav>        
+        </nav>
 
         <article class="content px-4">
             @Body

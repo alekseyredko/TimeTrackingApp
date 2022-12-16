@@ -23,7 +23,7 @@ namespace TimeTrackingApp.Infrastructure.Repositories
 
         public void Remove(TEntity entity)
         {
-            if (_entities.Entry(entity).State == EntityState.Detached)
+            if (_applicationDbContext.Entry(entity).State == EntityState.Detached)
             {
                 _entities.Attach(entity);
             }
@@ -70,7 +70,7 @@ namespace TimeTrackingApp.Infrastructure.Repositories
         public void Update(TEntity entity)
         {
             _entities.Attach(entity);
-            _entities.Entry(entity).State = EntityState.Modified;
+            _applicationDbContext.Entry(entity).State = EntityState.Modified;
         }     
     }
 }
