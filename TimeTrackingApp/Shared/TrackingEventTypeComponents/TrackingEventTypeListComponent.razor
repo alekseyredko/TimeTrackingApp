@@ -1,4 +1,5 @@
-﻿@using TimeTrackingApp.Domain.Entities;
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@using TimeTrackingApp.Domain.Entities;
 @using TimeTrackingApp.Models;
 
 @if (TrackingEventTypes == null)
@@ -40,7 +41,7 @@ else
 
     <div class="container mb-3">
         <h5 class="mb-3">Add new tracking event type here</h5>
-        <EditForm Model="@AddTrackingEventTypeModel" OnValidSubmit="HandleValidSubmit">
+        <EditForm Model="@AddTrackingEventTypeModel" OnSubmit="HandleSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -51,7 +52,7 @@ else
 
             <label for="description" class="form-label">Description</label>
             <InputText id="description" class="form-control mb-3" 
-                @bind-Value="AddTrackingEventTypeModel.Description"
+                @bind-Value="AddTrackingEventTypeModel.Description"                
                 DisplayName="Description"/>
 
             <button type="submit" class="btn btn-primary mb-3">Submit</button>
@@ -72,15 +73,41 @@ else
     [Parameter]
     public EventCallback<int> EntityIdChanged { get; set; }
 
+    [Inject]
+    public ProtectedLocalStorage ProtectedLocalStorage { get; set; }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ProtectedBrowserStorageResult<string> addTrackingEventModelDescription = await ProtectedLocalStorage.GetAsync<string>(nameof(AddTrackingEventTypeModel.Description));
+            if(addTrackingEventModelDescription.Success)
+            {
+                AddTrackingEventTypeModel.Description = addTrackingEventModelDescription.Value;
+            }
+
+            ProtectedBrowserStorageResult<string> addTrackingEventModelEventType = await ProtectedLocalStorage.GetAsync<string>(nameof(AddTrackingEventTypeModel.EventType));
+            if (addTrackingEventModelEventType.Success)
+            {
+                AddTrackingEventTypeModel.EventType = addTrackingEventModelEventType.Value;
+            }
+            StateHasChanged();
+        }        
+    }
 
     private async Task OnDeleteAsync(int id)
     {      
         await EntityIdChanged.InvokeAsync(id);
     }
-
-    private async Task HandleValidSubmit()
+   
+    private async Task HandleSubmit(EditContext editContext)
     {
-        await AddTrackingEventTypeModelChanged.InvokeAsync(AddTrackingEventTypeModel);
-        AddTrackingEventTypeModel = new AddTrackingEventTypeModel();
+        await ProtectedLocalStorage.SetAsync(nameof(AddTrackingEventTypeModel.Description), ((AddTrackingEventTypeModel)editContext.Model).Description);
+        if (editContext.Validate())
+        {                        
+            await AddTrackingEventTypeModelChanged.InvokeAsync(AddTrackingEventTypeModel);
+            AddTrackingEventTypeModel = new AddTrackingEventTypeModel();
+        }
     }    
 }
