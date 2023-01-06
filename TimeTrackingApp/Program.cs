@@ -1,9 +1,13 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TimeTrackingApp.Core.Services;
 using TimeTrackingApp.Core.Services.Interfaces;
 using TimeTrackingApp.Infrastructure;
 using TimeTrackingApp.Infrastructure.Extensions;
+using TimeTrackingApp.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.SignIn.RequireConfirmedEmail= false;
 })
     .AddEntityFrameworkStores<IdentityContext>();
+
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityValidationProvider<IdentityUser>>();
 
 var app = builder.Build();
 

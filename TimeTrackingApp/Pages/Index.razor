@@ -2,7 +2,6 @@
 @using TimeTrackingApp.Shared.TrackingEventComponents
 @using TimeTrackingApp.Shared.TrackingEventTypeComponents
 @inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Index</PageTitle>
 
@@ -16,11 +15,15 @@
 </AuthorizeView>
 
 @code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask{ get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            AuthenticationState authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            AuthenticationState authenticationState = await AuthenticationStateTask;            
 
             if(authenticationState.User.Identity.IsAuthenticated)
             {
