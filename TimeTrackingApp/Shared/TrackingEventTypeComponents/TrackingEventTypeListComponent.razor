@@ -95,7 +95,7 @@ else
         }        
     }
 
-    private async Task OnDeleteAsync(int id)
+    private async Task OnDeleteAsync(Guid id)
     {      
         await EntityIdChanged.InvokeAsync(id);
     }
