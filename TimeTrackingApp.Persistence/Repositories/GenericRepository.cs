@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using TimeTrackingApp.Application.Repositories;
+using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Domain.Entities;
 
 namespace TimeTrackingApp.Infrastructure.Repositories
@@ -30,9 +30,9 @@ namespace TimeTrackingApp.Infrastructure.Repositories
             _entities.Remove(entity);
         }
 
-        public async Task RemoveAsync(int id, CancellationToken cancellationToken)
+        public async Task RemoveAsync(Guid id, CancellationToken cancellationToken)
         {
-            TEntity entity = await _entities.FindAsync(id, cancellationToken);
+            TEntity entity = await _entities.FindAsync(new object[] { id, }, cancellationToken: cancellationToken);
             Remove(entity);
         }
 

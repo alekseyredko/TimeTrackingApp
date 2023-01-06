@@ -1,12 +1,7 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using TimeTrackingApp.Core.Services;
 using TimeTrackingApp.Core.Services.Interfaces;
-using TimeTrackingApp.Data;
 using TimeTrackingApp.Infrastructure;
 using TimeTrackingApp.Infrastructure.Extensions;
 

@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TimeTrackingApp.Application.Repositories;
+using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Core.UnitOfWork;
 using TimeTrackingApp.Domain.Entities;
 using TimeTrackingApp.Domain.UnitOfWork;
 using TimeTrackingApp.Infrastructure.Repositories;
+using TimeTrackingApp.Persistence.Repositories;
 
 namespace TimeTrackingApp.Infrastructure.UnitOfWork
 {
-    public class UnitOfWorkFactory : IUnitOfWorkFactory
+    internal class UnitOfWorkFactory : IUnitOfWorkFactory
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -24,7 +25,7 @@ namespace TimeTrackingApp.Infrastructure.UnitOfWork
             ApplicationDbContext applicationDbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             IGenericRepository<TimeTrack> timeTrackRepository = new GenericRepository<TimeTrack>(applicationDbContext);
-            IGenericRepository<TrackingEvent> trackingEventRepository = new GenericRepository<TrackingEvent>(applicationDbContext);
+            ITrackingEventRepository trackingEventRepository = new TrackingEventRepository(applicationDbContext);
             IGenericRepository<TrackingEventType> trackingEventTypeRepository = new GenericRepository<TrackingEventType>(applicationDbContext);
 
             return new UnitOfWork(timeTrackRepository, trackingEventRepository, trackingEventTypeRepository, applicationDbContext);

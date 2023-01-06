@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TimeTrackingApp.Infrastructure\TimeTrackingApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\TimeTrackingApp.Persistence\TimeTrackingApp.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

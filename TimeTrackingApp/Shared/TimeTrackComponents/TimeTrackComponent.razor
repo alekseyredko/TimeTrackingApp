@@ -38,7 +38,7 @@ else
 
     private List<TimeTrack> timeTracks;
 
-    private int trackingEventId = -1;
+    private Guid trackingEventId;
 
     private TimeTrack selectedTimeTrack;
 
@@ -56,7 +56,7 @@ else
 
     private async Task OnAddEntityAsync()
     {
-        TimeTrack newTimeTrack = await TimeTrackingService.StartTimeTrackAsync(trackingEventId, CancellationToken.None);
+        TimeTrack newTimeTrack = await TimeTrackingService.StartTimeTrackAsync(trackingEventId, DateTimeOffset.Now, CancellationToken.None);
         timeTracks.Add(newTimeTrack);
 
         showTrackTime = true;
@@ -70,12 +70,9 @@ else
 
     private async Task OnStopTimeTrackAsync()
     {
-        TimeTrack stoppedTimeTrack = await TimeTrackingService.StopCurrentTimeTrackAsync(CancellationToken.None);
+        TimeTrack stoppedTimeTrack = await TimeTrackingService.StopCurrentTimeTrackAsync(DateTimeOffset.Now, CancellationToken.None);
         TimeTrack foundTimeTrack = timeTracks.First(x => x.Id == stoppedTimeTrack.Id);
-        foundTimeTrack.EndTrackTime = stoppedTimeTrack.EndTrackTime;
-        foundTimeTrack.Duration = stoppedTimeTrack.Duration;
-        foundTimeTrack.IsFinished = stoppedTimeTrack.IsFinished;
-        foundTimeTrack.TrackingEvent = stoppedTimeTrack.TrackingEvent;
+        foundTimeTrack = stoppedTimeTrack;
 
         showTrackTime = false;
     }

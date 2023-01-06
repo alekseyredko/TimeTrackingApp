@@ -1,7 +1,6 @@
-﻿using TimeTrackingApp.Application.Repositories;
-using TimeTrackingApp.Domain.Entities;
+﻿using TimeTrackingApp.Domain.Entities;
 
-namespace TimeTrackingApp.Domain.Repositories;
+namespace TimeTrackingApp.Core.Repositories;
 
 public interface ITimeTrackRepository : IGenericRepository<TimeTrack>
 {

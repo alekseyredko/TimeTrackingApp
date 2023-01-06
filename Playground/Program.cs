@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Playground;
-using TimeTrackingApp.Core.Services;
-using TimeTrackingApp.Core.Services.Interfaces;
+using TimeTrackingApp.Application.Services;
+using TimeTrackingApp.Application.Services.Interfaces;
 using TimeTrackingApp.Infrastructure.Extensions;
 
 IHostBuilder hostBuidler = Host.CreateDefaultBuilder(args);

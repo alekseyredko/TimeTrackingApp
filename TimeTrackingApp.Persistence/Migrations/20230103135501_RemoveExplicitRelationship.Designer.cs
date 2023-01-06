@@ -5,35 +5,33 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using TimeTrackingApp.Infrastructure;
 
 #nullable disable
 
-namespace TimeTrackingApp.Infrastructure.Migrations
+namespace TimeTrackingApp.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221202123706_Initial")]
-    partial class Initial
+    [Migration("20230103135501_RemoveExplicitRelationship")]
+    partial class RemoveExplicitRelationship
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "6.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("TimeTrackingApp.Domain.Entities.TimeTrack", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset?>("Duration")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<DateTimeOffset?>("EndTrackTime")
                         .HasColumnType("datetimeoffset");
@@ -44,8 +42,8 @@ namespace TimeTrackingApp.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("StartTrackTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("TrackingEventId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("TrackingEventId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -56,32 +54,30 @@ namespace TimeTrackingApp.Infrastructure.Migrations
 
             modelBuilder.Entity("TimeTrackingApp.Domain.Entities.TrackingEvent", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TrackingEventTypeId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsTracking")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TrackingEventTypeId");
 
                     b.ToTable("TrackingEvents");
                 });
 
             modelBuilder.Entity("TimeTrackingApp.Domain.Entities.TrackingEventType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -95,22 +91,50 @@ namespace TimeTrackingApp.Infrastructure.Migrations
                     b.ToTable("TrackingEventTypes");
                 });
 
+            modelBuilder.Entity("TrackingEventTrackingEventType", b =>
+                {
+                    b.Property<Guid>("TrackingEventTypesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrackingEventsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TrackingEventTypesId", "TrackingEventsId");
+
+                    b.HasIndex("TrackingEventsId");
+
+                    b.ToTable("TrackingEventTrackingEventType");
+                });
+
             modelBuilder.Entity("TimeTrackingApp.Domain.Entities.TimeTrack", b =>
                 {
+                    b.HasOne("TimeTrackingApp.Domain.Entities.TrackingEvent", "TrackingEvent")
+                        .WithMany("TimeTracks")
+                        .HasForeignKey("TrackingEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrackingEvent");
+                });
+
+            modelBuilder.Entity("TrackingEventTrackingEventType", b =>
+                {
+                    b.HasOne("TimeTrackingApp.Domain.Entities.TrackingEventType", null)
+                        .WithMany()
+                        .HasForeignKey("TrackingEventTypesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TimeTrackingApp.Domain.Entities.TrackingEvent", null)
                         .WithMany()
-                        .HasForeignKey("TrackingEventId")
+                        .HasForeignKey("TrackingEventsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("TimeTrackingApp.Domain.Entities.TrackingEvent", b =>
                 {
-                    b.HasOne("TimeTrackingApp.Domain.Entities.TrackingEventType", null)
-                        .WithMany()
-                        .HasForeignKey("TrackingEventTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("TimeTracks");
                 });
 #pragma warning restore 612, 618
         }

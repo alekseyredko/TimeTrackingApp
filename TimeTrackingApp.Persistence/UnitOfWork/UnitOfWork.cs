@@ -1,4 +1,4 @@
-﻿using TimeTrackingApp.Application.Repositories;
+﻿using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Domain.Entities;
 using TimeTrackingApp.Domain.UnitOfWork;
 
@@ -10,7 +10,7 @@ namespace TimeTrackingApp.Infrastructure.UnitOfWork
 
         private readonly IGenericRepository<TimeTrack> _timeTrackRepository;
 
-        private readonly IGenericRepository<TrackingEvent> _trackingEventRepository;
+        private readonly ITrackingEventRepository _trackingEventRepository;
 
         private readonly IGenericRepository<TrackingEventType> _trackingEventTypeRepository;
 
@@ -19,7 +19,7 @@ namespace TimeTrackingApp.Infrastructure.UnitOfWork
         public IGenericRepository<TimeTrack> TimeTrackRepository
             => _timeTrackRepository;
 
-        public IGenericRepository<TrackingEvent> TrackingEventRepository
+        public ITrackingEventRepository TrackingEventRepository
             => _trackingEventRepository;
 
         public IGenericRepository<TrackingEventType> TrackingEventTypeRepository
@@ -28,7 +28,7 @@ namespace TimeTrackingApp.Infrastructure.UnitOfWork
 
         public UnitOfWork(
             IGenericRepository<TimeTrack> timeTrackRepository,
-            IGenericRepository<TrackingEvent> trackingEventRepository,
+            ITrackingEventRepository trackingEventRepository,
             IGenericRepository<TrackingEventType> trackingEventTypeRepository,
             ApplicationDbContext applicationDbContext)
         {

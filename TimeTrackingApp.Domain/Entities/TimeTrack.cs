@@ -1,34 +1,31 @@
 ﻿namespace TimeTrackingApp.Domain.Entities;
 
-public class TimeTrack : BaseEntity
+public partial class TimeTrack : BaseEntity
 {
-    public DateTimeOffset StartTrackTime { get; set; }
+    public DateTimeOffset StartTrackTime { get; private set; }
 
-    public DateTimeOffset? EndTrackTime { get; set; }
+    public DateTimeOffset? EndTrackTime { get; private set; }
 
-    public TimeSpan? Duration { get; set; }
+    public TimeSpan? Duration { get; private set; }
 
-    public bool IsFinished { get; set; }
+    public bool IsFinished { get; private set; } 
 
-    public int TrackingEventId { get; set; }
-
-    public TrackingEvent TrackingEvent { get; set; }
-
-    public void StartTimeTrack()
+    public TrackingEvent TrackingEvent { get; private set; }
+    
+    internal static TimeTrack Create(Guid timeTrackId, DateTimeOffset startTrackTime, TrackingEvent trackingEvent)
     {
-        StartTrackTime = DateTimeOffset.Now;
-    }
+        return new TimeTrack { Id = timeTrackId, StartTrackTime = startTrackTime, TrackingEvent = trackingEvent };
+    }    
 
-    public void StopTimeTrack()
+    internal void StopTimeTrack(DateTimeOffset endTrackTime)
     {
-        EndTrackTime= DateTimeOffset.Now;
+        if(endTrackTime < StartTrackTime)
+        {
+            throw new Exception("EndTrackTime cannot be lower than StartTrackTime.");
+        }
+
+        EndTrackTime = endTrackTime;
         IsFinished = true;
         Duration = (EndTrackTime - StartTrackTime);
-    }
-
-    public void SetTrackingEvent(TrackingEvent trackingEvent)
-    {
-        TrackingEventId = trackingEvent.Id;
-        TrackingEvent = trackingEvent;
     }
 }

@@ -1,43 +1,69 @@
 ﻿@using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Models;
 
 <div class="container mb-3">
-    <h5 class="mb-3">Add new tracking event here</h5>
-    <div class="mb-3">
-        <label for="eventDescriptionInput" class="form-label">Description</label>
-        <input type="text" class="form-control" id="eventDescriptionInput" @bind="TrackingEvent.Description"/>       
-    </div>
+    <EditForm Model="TrackingEvent" OnValidSubmit="HandleValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    @if (TrackingEventTypes != null)
-    {
-        <select class="form-select mb-3" @bind="TrackingEvent.TrackingEventTypeId">
-            @foreach (TrackingEventType trackingEventType in TrackingEventTypes)
-            {
-                <option value="@trackingEventType.Id">@trackingEventType.EventType</option>
-            }
-        </select>
-    }
+        <h5 class="mb-3">Add new tracking event here</h5>
+        
+        <div class="mb-3">
+            <label for="eventDescriptionInput" class="form-label">Name</label>
+            <InputText class="form-control mb-3" id="eventNameInput" DisplayName="Name" @bind-Value="TrackingEvent.Name" />
+        </div>
 
-    <button type="submit" class="btn btn-primary" @onclick="OnAddEntityAsync">Submit</button>
+        <div class="mb-3">
+            <label for="eventDescriptionInput" class="form-label">Description</label>
+            <InputTextArea class="form-control mb-3" id="eventDescriptionInput" DisplayName="Description" @bind-Value="TrackingEvent.Description" />
+        </div>
+
+        @if (TrackingEventTypes != null)
+        {
+            @*<InputSelect class="form-select mb-3" @bind-Value="TrackingEvent.EventTypes">
+                @foreach (TrackingEventTypeModel trackingEventType in TrackingEventTypes)
+                {
+                    <option value="@trackingEventType">@trackingEventType.EventType</option>
+                }
+            </InputSelect>*@
+            <select class="form-select mb-3" multiple @onchange="SelectedItemsChanged">
+                @foreach (TrackingEventTypeModel trackingEventType in TrackingEventTypes)
+                {
+                    <option value="@trackingEventType">@trackingEventType.EventType</option>
+                }
+            </select>
+        }
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
 </div>
 
 @code {
     [Parameter]
-    public TrackingEvent TrackingEvent { get; set; }
+    public AddTrackingEventModel TrackingEvent { get; set; }
 
     [Parameter]
-    public List<TrackingEventType> TrackingEventTypes { get; set; }
+    public List<TrackingEventTypeModel> TrackingEventTypes { get; set; }
 
     [Parameter]
-    public EventCallback<TrackingEvent> TrackingEventChanged { get; set; }
+    public EventCallback<AddTrackingEventModel> TrackingEventChanged { get; set; }
 
     [Parameter]
-    public EventCallback<List<TrackingEventType>> TrackingEventTypesChanged { get; set; }
+    public EventCallback<List<TrackingEventTypeModel>> TrackingEventTypesChanged { get; set; }
 
     [Parameter]
     public EventCallback TrackingEventAdded { get; set; }
 
-    public async Task OnAddEntityAsync()
+    private void SelectedItemsChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            TrackingEvent.EventTypes = ((string[])e.Value).Select(TrackingEventTypeModel.FromJson).ToArray();
+        }
+    }
+
+    public async Task HandleValidSubmitAsync()
     {
         await TrackingEventAdded.InvokeAsync();
-    }
+    }  
 }

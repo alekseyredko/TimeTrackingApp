@@ -2,30 +2,77 @@
 
 public class TrackingEvent : BaseEntity
 {
-    public ICollection<TimeTrack> TimeTracks { get; set; }
-    public string? Description { get; set; }
-    public int TrackingEventTypeId { get; set; }
-    public TrackingEventType TrackingEventType { get; set; }
+    private List<TimeTrack> _timeTracks = new List<TimeTrack>();
+    private List<TrackingEventType> _trackingEventTypes= new List<TrackingEventType>();
 
-    public void AddTimeTrack(int timeTrackId)
+    public IReadOnlyCollection<TimeTrack> TimeTracks => _timeTracks.AsReadOnly();
+    
+    public string Name { get; private set; }
+
+    public string? Description { get; private set; }  
+
+    public bool IsTracking { get; private set; }
+    
+    public IReadOnlyCollection<TrackingEventType> TrackingEventTypes => _trackingEventTypes.AsReadOnly();  
+
+    private TrackingEvent(){}
+
+    public static TrackingEvent Create(Guid id, string name, string? description, params TrackingEventType[] trackingEventTypes)
     {
-        if (!TimeTracks.Any(x => x.Id == timeTrackId))
+        //Rule to validate string length
+        if (description?.Length > 5000)
         {
-            TimeTrack timeTrack = new TimeTrack();
-            
-            timeTrack.StartTimeTrack();
-
-            TimeTracks.Add(timeTrack);
-            return;
+            throw new Exception("Description is too long.");
         }
 
-        TimeTrack foundTimeTrack = TimeTracks.First(x => x.Id == timeTrackId);
+        TrackingEvent trackingEvent = CreatePrivate(id, name, description, trackingEventTypes);
 
-        if (foundTimeTrack.IsFinished)
-        {
-            throw new InvalidOperationException("This time track has been already finished!");
+        if (trackingEventTypes?.Length > 0)
+        {            
+            foreach (TrackingEventType trackingEventType in trackingEventTypes)
+            {
+                trackingEventType.AddTrackingEvent(trackingEvent);
+            }
         }
+        else
+        {
+            // if no Tracking Event types, add standart one
+            TrackingEventType defaultTrakingEventType = TrackingEventType.Create(Guid.NewGuid(), "default", null);
+            defaultTrakingEventType.AddTrackingEvent(trackingEvent);            
+        }
+        return trackingEvent;
+    }
 
-        foundTimeTrack.StopTimeTrack();        
+    private static TrackingEvent CreatePrivate(Guid id, string name, string? description, params TrackingEventType[] trackingEventTypes)
+    {
+        TrackingEvent trackingEvent = new TrackingEvent { Id = id, Name = name, Description = description };
+        trackingEvent.AddTrackingEventTypes(trackingEventTypes);
+
+        return trackingEvent;
+    }
+
+    private void AddTrackingEventTypes(TrackingEventType[] trackingEventTypes)
+    {
+        if (_trackingEventTypes == null)
+        {
+            _trackingEventTypes = new List<TrackingEventType>();
+        }
+        _trackingEventTypes.AddRange(trackingEventTypes);
+    }
+
+    public void StartTimeTrack(DateTimeOffset startDateTimeOffset)
+    {
+        //TODO: finish previous timetrack?
+        //TODO: use guid instead of id?
+        TimeTrack timeTrack = TimeTrack.Create(Guid.NewGuid(), startDateTimeOffset, this);
+        _timeTracks.Add(timeTrack);
+        IsTracking= true;
+    }
+
+    public void StopCurentTimeTrack(DateTimeOffset stopDateTimeOffset)
+    {
+        TimeTrack timeTrackToFinish = _timeTracks.First(timeTrack => !timeTrack.IsFinished);
+        timeTrackToFinish.StopTimeTrack(stopDateTimeOffset);
+        IsTracking= false;
     }
 }

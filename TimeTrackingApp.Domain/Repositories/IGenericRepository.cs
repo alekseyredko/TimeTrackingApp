@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using TimeTrackingApp.Domain.Entities;
 
-namespace TimeTrackingApp.Application.Repositories;
+namespace TimeTrackingApp.Core.Repositories;
 
 public interface IGenericRepository<TEntity> where TEntity : BaseEntity
 {
@@ -10,5 +10,5 @@ public interface IGenericRepository<TEntity> where TEntity : BaseEntity
     Task AddAsync(TEntity entity, CancellationToken cancellation);
     void Update(TEntity entity);
     void Remove(TEntity entity);
-    Task RemoveAsync(int id, CancellationToken cancellationToken);
+    Task RemoveAsync(Guid id, CancellationToken cancellationToken);
 }

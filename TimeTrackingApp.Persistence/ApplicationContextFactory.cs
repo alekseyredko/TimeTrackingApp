@@ -9,7 +9,7 @@ namespace TimeTrackingApp.Infrastructure
         {
             DbContextOptionsBuilder<ApplicationDbContext> dbContextOptionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             dbContextOptionsBuilder.UseSqlServer("Data Source=WAW0446;Initial Catalog=TimeTrackingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-
+            
             return new ApplicationDbContext(dbContextOptionsBuilder.Options);
         }
     }

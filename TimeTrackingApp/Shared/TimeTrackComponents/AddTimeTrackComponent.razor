@@ -18,13 +18,13 @@
 
 @code {
     [Parameter]
-    public int TrackingEventId { get; set; }
+    public Guid TrackingEventId { get; set; }
 
     [Parameter]
     public List<TrackingEvent> TrackingEvents { get; set; }
 
     [Parameter]
-    public EventCallback<int> TrackingEventIdChanged { get; set; }
+    public EventCallback<Guid> TrackingEventIdChanged { get; set; }
 
     [Parameter]
     public EventCallback<List<TrackingEvent>> TrackingEventsChanged { get; set; }

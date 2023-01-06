@@ -59,8 +59,7 @@ else
     </div>
 }
 
-@code {
-    [Parameter]
+@code {    
     public AddTrackingEventTypeModel AddTrackingEventTypeModel { get; set; } = new AddTrackingEventTypeModel();
 
     [Parameter]
@@ -70,17 +69,16 @@ else
     public List<TrackingEventType> TrackingEventTypes { get; set; }
 
     [Parameter]
-    public EventCallback<int> EntityIdChanged { get; set; }
+    public EventCallback<Guid> EntityIdChanged { get; set; }
 
 
-    private async Task OnDeleteAsync(int id)
+    private async Task OnDeleteAsync(Guid id)
     {      
         await EntityIdChanged.InvokeAsync(id);
     }
 
     private async Task HandleValidSubmit()
     {
-        await AddTrackingEventTypeModelChanged.InvokeAsync(AddTrackingEventTypeModel);
-        AddTrackingEventTypeModel = new AddTrackingEventTypeModel();
+        await AddTrackingEventTypeModelChanged.InvokeAsync(AddTrackingEventTypeModel);        
     }    
 }

@@ -2,22 +2,31 @@
 
 public class TrackingEventType : BaseEntity
 {
-    public ICollection<TrackingEvent> TrackingEvents { get; set; }
-    public string EventType { get; set; }
-    public string? Description { get; set; }
+    private List<TrackingEvent> _trackingEvents = new List<TrackingEvent>();
 
-    public void AddTrackingEvent(TrackingEvent trackingEvent)
+    public IReadOnlyCollection<TrackingEvent> TrackingEvents => _trackingEvents.AsReadOnly();
+    public string EventType { get; private set; }
+    public string? Description { get; private set; }
+
+    private TrackingEventType(Guid id, string eventType, string? description)
     {
-        if (!TrackingEvents.Any(x => x.Id == trackingEvent.TrackingEventTypeId))
-        {
-            TrackingEvent timeTrack = new TrackingEvent();
+        Id = id;
+        EventType = eventType;
+        Description = description;
+    }
 
-            TrackingEvents.Add(timeTrack);
-            return;
-        }
-        else
+    public static TrackingEventType Create(Guid id, string eventType, string? description)
+    {
+        if (description?.Length > 5000)
         {
-            throw new InvalidOperationException("This tracking event has been already added!");
-        }        
+            throw new Exception("Descrption must be shorter than 5000 symbols");
+        }
+
+        return new TrackingEventType(id, eventType, description);
+    }
+
+    internal void AddTrackingEvent(TrackingEvent trackingEvent)
+    {
+        _trackingEvents.Add(trackingEvent);
     }
 }

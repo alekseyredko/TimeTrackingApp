@@ -7,9 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp", "TimeTrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Core", "TimeTrackingApp.Domain\TimeTrackingApp.Core.csproj", "{5FA4F809-390E-4E3E-9A5E-A508D6AE5A6F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Infrastructure", "TimeTrackingApp.Infrastructure\TimeTrackingApp.Infrastructure.csproj", "{1BA2FCEA-C80C-4ED9-AABB-8DCA5966816A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground", "Playground\Playground.csproj", "{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Application", "TimeTrackingApp.Application\TimeTrackingApp.Application.csproj", "{2A0E41D1-7311-41C9-B06D-101D302FC6E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Persistence", "TimeTrackingApp.Persistence\TimeTrackingApp.Persistence.csproj", "{27B8F474-454D-4640-AC83-D21292D709CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTrackingApp.Infrastructure", "TimeTrackingApp.Infrastructure\TimeTrackingApp.Infrastructure.csproj", "{50D10041-66FC-4A86-A82B-2D8D1A61FF53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +29,22 @@ Global
 		{5FA4F809-390E-4E3E-9A5E-A508D6AE5A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FA4F809-390E-4E3E-9A5E-A508D6AE5A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FA4F809-390E-4E3E-9A5E-A508D6AE5A6F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BA2FCEA-C80C-4ED9-AABB-8DCA5966816A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BA2FCEA-C80C-4ED9-AABB-8DCA5966816A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BA2FCEA-C80C-4ED9-AABB-8DCA5966816A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BA2FCEA-C80C-4ED9-AABB-8DCA5966816A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A0E41D1-7311-41C9-B06D-101D302FC6E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A0E41D1-7311-41C9-B06D-101D302FC6E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A0E41D1-7311-41C9-B06D-101D302FC6E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A0E41D1-7311-41C9-B06D-101D302FC6E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B8F474-454D-4640-AC83-D21292D709CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B8F474-454D-4640-AC83-D21292D709CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B8F474-454D-4640-AC83-D21292D709CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B8F474-454D-4640-AC83-D21292D709CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D10041-66FC-4A86-A82B-2D8D1A61FF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D10041-66FC-4A86-A82B-2D8D1A61FF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D10041-66FC-4A86-A82B-2D8D1A61FF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D10041-66FC-4A86-A82B-2D8D1A61FF53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

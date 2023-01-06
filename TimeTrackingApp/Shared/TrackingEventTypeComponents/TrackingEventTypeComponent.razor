@@ -10,9 +10,7 @@
     AddTrackingEventTypeModelChanged="OnAddAsync"/>
 
 @code {
-    private List<TrackingEventType> _trackingEventTypes;
-
-    private AddTrackingEventTypeModel _addTrackingEventTypeModel = new AddTrackingEventTypeModel();
+    private List<TrackingEventType> _trackingEventTypes;    
 
     [Inject]
     private ITimeTrackingService _timeTrackingService { get; set; }
@@ -33,17 +31,12 @@
 
     private async Task OnAddAsync(AddTrackingEventTypeModel addTrackingEventTypeModel)
     {
-        TrackingEventType trackingEventType = new TrackingEventType
-            {
-                EventType = addTrackingEventTypeModel.EventType,
-                Description = addTrackingEventTypeModel.Description,
-                TrackingEvents = new List<TrackingEvent>()
-            };
+        TrackingEventType trackingEventType = TrackingEventType.Create(Guid.NewGuid(), addTrackingEventTypeModel.EventType, addTrackingEventTypeModel.Description);
         TrackingEventType newTrackingEventType = await _timeTrackingService.AddTrackingEventTypeAsync(trackingEventType, _applicationLifetime.ApplicationStopping);
         _trackingEventTypes.Add(newTrackingEventType);
     }
 
-    private async Task OnDeleteAsync(int id)
+    private async Task OnDeleteAsync(Guid id)
     {
         await _timeTrackingService.DeleteTrackingEventTypeAsync(id, _applicationLifetime.ApplicationStopping);
         _trackingEventTypes.Remove(_trackingEventTypes.First(x => x.Id == id));
