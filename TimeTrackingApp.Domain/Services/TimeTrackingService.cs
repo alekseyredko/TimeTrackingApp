@@ -70,9 +70,11 @@ namespace TimeTrackingApp.Core.Services
 
             trackingEvent.StartTimeTrack(startTime);
 
+            unitOfWork.TrackingEventRepository.UpdateTrackingEvent(trackingEvent);
+
             await unitOfWork.SaveChangesAsync();
 
-            return await this.GetCurrentActiveTimeTrackAsync(cancellationToken);            
+            return trackingEvent.TimeTracks.Last();           
         }
 
         public async Task<TimeTrack> StopCurrentTimeTrackAsync(DateTimeOffset endTime, CancellationToken cancellationToken)

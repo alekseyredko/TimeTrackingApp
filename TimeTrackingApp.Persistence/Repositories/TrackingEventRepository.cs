@@ -23,5 +23,24 @@ namespace TimeTrackingApp.Persistence.Repositories
            
             return entityEntry.Entity;
         }
+
+        public TrackingEvent UpdateTrackingEvent(TrackingEvent trackingEvent)
+        {
+            EntityEntry<TrackingEvent> entityEntry = _applicationDbContext.Attach(trackingEvent);
+
+            foreach (TimeTrack timeTrack in trackingEvent.TimeTracks)
+            {
+                if (timeTrack.EndTrackTime.HasValue)
+                {
+                    _applicationDbContext.Attach<TimeTrack>(timeTrack);
+                }
+                else
+                {
+                    _applicationDbContext.Add<TimeTrack>(timeTrack);
+                }
+            }
+
+            return entityEntry.Entity;
+        }
     }
 }
