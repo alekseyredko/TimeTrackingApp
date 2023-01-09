@@ -12,6 +12,6 @@ namespace TimeTrackingApp.Models
         [MaxLength(1000)]
         public string Description { get; set; }
 
-        public TrackingEventTypeModel[] EventTypes { get; set; }
+        public TrackingEventTypeModel[] EventTypes { get; set; } = new TrackingEventTypeModel[0] { };
     }
 }

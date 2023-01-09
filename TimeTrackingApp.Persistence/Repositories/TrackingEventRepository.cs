@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Domain.Entities;
 using TimeTrackingApp.Infrastructure;
@@ -13,14 +14,23 @@ namespace TimeTrackingApp.Persistence.Repositories
         }
 
         public async Task<TrackingEvent> AddTrackingEventAsync(TrackingEvent trackingEvent, CancellationToken cancellation)
-        {
-            EntityEntry<TrackingEvent> entityEntry = await _applicationDbContext.AddAsync(trackingEvent);
+        {           
+            EntityEntry<TrackingEvent> entityEntry = _applicationDbContext.Entry<TrackingEvent>(trackingEvent);
+            entityEntry.State = EntityState.Added;
 
             foreach (TrackingEventType trackingEventType in trackingEvent.TrackingEventTypes)
             {
-                 _applicationDbContext.Attach<TrackingEventType>(trackingEventType);              
-            }           
-           
+                EntityEntry<TrackingEventType> trackingEventTypeEntry = _applicationDbContext.Entry<TrackingEventType>(trackingEventType);
+                if (trackingEventType.Id == Guid.Empty)
+                {
+                    trackingEventTypeEntry.State = EntityState.Added;
+                }
+                else
+                {
+                    trackingEventTypeEntry.State = EntityState.Unchanged;
+                }
+            }
+
             return entityEntry.Entity;
         }
 

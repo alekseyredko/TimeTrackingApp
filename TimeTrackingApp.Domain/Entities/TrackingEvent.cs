@@ -37,8 +37,9 @@ public class TrackingEvent : BaseEntity
         else
         {
             // if no Tracking Event types, add standart one
-            TrackingEventType defaultTrakingEventType = TrackingEventType.Create(Guid.NewGuid(), "default", null);
-            defaultTrakingEventType.AddTrackingEvent(trackingEvent);            
+            TrackingEventType defaultTrakingEventType = TrackingEventType.Create(Guid.Empty, "default", null);
+            defaultTrakingEventType.AddTrackingEvent(trackingEvent);
+            trackingEvent.AddTrackingEventTypes(defaultTrakingEventType);
         }
         return trackingEvent;
     }
@@ -51,7 +52,7 @@ public class TrackingEvent : BaseEntity
         return trackingEvent;
     }
 
-    private void AddTrackingEventTypes(TrackingEventType[] trackingEventTypes)
+    private void AddTrackingEventTypes(params TrackingEventType[] trackingEventTypes)
     {
         if (_trackingEventTypes == null)
         {
