@@ -1,6 +1,6 @@
 ﻿using TimeTrackingApp.Domain.Entities;
 
-namespace TimeTrackingApp.Core.Services.Interfaces
+namespace TimeTrackingApp.Application.Services.Interfaces
 {
     public interface ITimeTrackingService
     {

@@ -1,6 +1,4 @@
-﻿using TimeTrackingApp.Domain.UnitOfWork;
-
-namespace TimeTrackingApp.Core.UnitOfWork
+﻿namespace TimeTrackingApp.Application.UnitOfWork
 {
     public interface IUnitOfWorkFactory
     {

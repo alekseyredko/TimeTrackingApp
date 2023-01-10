@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TimeTrackingApp.Core.UnitOfWork;
+using TimeTrackingApp.Application.UnitOfWork;
 using TimeTrackingApp.Infrastructure.UnitOfWork;
 
 namespace TimeTrackingApp.Infrastructure.Extensions

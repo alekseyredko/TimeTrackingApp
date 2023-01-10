@@ -1,6 +1,6 @@
 ﻿using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Domain.Entities;
-using TimeTrackingApp.Domain.UnitOfWork;
+using TimeTrackingApp.Application.UnitOfWork;
 
 namespace TimeTrackingApp.Infrastructure.UnitOfWork
 {

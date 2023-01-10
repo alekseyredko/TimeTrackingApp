@@ -1,9 +1,8 @@
-﻿using TimeTrackingApp.Core.Services.Interfaces;
-using TimeTrackingApp.Core.UnitOfWork;
+﻿using TimeTrackingApp.Application.Services.Interfaces;
+using TimeTrackingApp.Application.UnitOfWork;
 using TimeTrackingApp.Domain.Entities;
-using TimeTrackingApp.Domain.UnitOfWork;
 
-namespace TimeTrackingApp.Core.Services
+namespace TimeTrackingApp.Application.Services
 {
     public class TimeTrackingService : ITimeTrackingService
     {

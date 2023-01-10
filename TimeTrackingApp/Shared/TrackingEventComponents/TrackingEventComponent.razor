@@ -1,4 +1,4 @@
-﻿@using TimeTrackingApp.Core.Services.Interfaces;
+﻿@using TimeTrackingApp.Application.Services.Interfaces;
 @using TimeTrackingApp.Domain.Entities;
 @using TimeTrackingApp.Models;
 <h4>TrackingEventComponent</h4>
@@ -23,14 +23,15 @@
     private ITimeTrackingService _timeTrackingService { get; set; }
 
     protected override async Task OnInitializedAsync()  
-   {
+    {
         _trackingEvents = (await _timeTrackingService.GetTrackingEventsAsync(CancellationToken.None)).ToList();
         _trackingEventTypes = (await _timeTrackingService.GetAllTrackingEventTypes(CancellationToken.None)).Select(x => new TrackingEventTypeModel { Id = x.Id, EventType = x.EventType, Description = x.Description }).ToList();      
     }
 
     private async Task OnAddEntityAsync()
     {
-        TrackingEvent trackingEventToAdd = TrackingEvent.Create(Guid.NewGuid(), _trackingEventToAdd.Name, _trackingEventToAdd.Description, _trackingEventToAdd.EventTypes.Select(x => TrackingEventType.Create(x.Id, x.EventType, x.Description)).ToArray());
+        TrackingEventType[] trackingEventTypes = _trackingEventToAdd.EventTypes.Select(x => TrackingEventType.Create(x.Id, x.EventType, x.Description)).ToArray();
+        TrackingEvent trackingEventToAdd = TrackingEvent.Create(Guid.NewGuid(), _trackingEventToAdd.Name, _trackingEventToAdd.Description, trackingEventTypes);
         TrackingEvent newTrackingEvent = await _timeTrackingService.AddTrakingEventAsync(trackingEventToAdd, CancellationToken.None);
         _trackingEvents.Add(newTrackingEvent);
     }

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp", "TimeTrac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Core", "TimeTrackingApp.Domain\TimeTrackingApp.Core.csproj", "{5FA4F809-390E-4E3E-9A5E-A508D6AE5A6F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground", "Playground\Playground.csproj", "{BD191D3B-B763-45F4-B6B8-F4C81A21AE2E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Application", "TimeTrackingApp.Application\TimeTrackingApp.Application.csproj", "{2A0E41D1-7311-41C9-B06D-101D302FC6E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeTrackingApp.Persistence", "TimeTrackingApp.Persistence\TimeTrackingApp.Persistence.csproj", "{27B8F474-454D-4640-AC83-D21292D709CE}"

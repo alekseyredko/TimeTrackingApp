@@ -1,7 +1,7 @@
 ﻿using TimeTrackingApp.Core.Repositories;
 using TimeTrackingApp.Domain.Entities;
 
-namespace TimeTrackingApp.Domain.UnitOfWork;
+namespace TimeTrackingApp.Application.UnitOfWork;
 
 public interface IUnitOfWork: IDisposable, IAsyncDisposable
 {

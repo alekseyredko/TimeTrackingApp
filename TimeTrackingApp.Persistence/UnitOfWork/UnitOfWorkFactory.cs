@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TimeTrackingApp.Core.Repositories;
-using TimeTrackingApp.Core.UnitOfWork;
+using TimeTrackingApp.Application.UnitOfWork;
 using TimeTrackingApp.Domain.Entities;
-using TimeTrackingApp.Domain.UnitOfWork;
 using TimeTrackingApp.Infrastructure.Repositories;
 using TimeTrackingApp.Persistence.Repositories;
 
