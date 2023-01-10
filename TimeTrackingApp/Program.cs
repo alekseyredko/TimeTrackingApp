@@ -13,12 +13,14 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddUnitOfWorkFactory(builder.Configuration);
+//builder.Services.AddUnitOfWorkFactory(builder.Configuration);
+builder.Services.AddInMemoryUnitOfWorkFactory(builder.Configuration);
 builder.Services.AddTransient<ITimeTrackingService, TimeTrackingService>();
 
 builder.Services.AddDbContext<IdentityContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
+    options.UseInMemoryDatabase("IdentityDb");
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -33,6 +35,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<IdentityContext>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityValidationProvider<IdentityUser>>();
+builder.Services.AddMediatRDependencies();
 
 var app = builder.Build();
 

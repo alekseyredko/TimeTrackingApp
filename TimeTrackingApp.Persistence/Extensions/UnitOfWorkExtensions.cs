@@ -16,5 +16,14 @@ namespace TimeTrackingApp.Infrastructure.Extensions
             });
             services.AddTransient<IUnitOfWorkFactory, UnitOfWorkFactory>();                            
         }
+
+        public static void AddInMemoryUnitOfWorkFactory(this IServiceCollection services, IConfiguration configuration, string connectionStringPath = "ApplicationDbContext")
+        {
+            services.AddDbContextFactory<ApplicationDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("TimeTrackingDb");
+            });
+            services.AddTransient<IUnitOfWorkFactory, UnitOfWorkFactory>();                            
+        }
     }
 }

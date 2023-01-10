@@ -1,45 +1,42 @@
-﻿@using TimeTrackingApp.Application.Services.Interfaces;
+﻿@using Infrastructure.Models
 @using TimeTrackingApp.Domain.Entities;
 @using TimeTrackingApp.Models;
+@using MediatR;
 <h4>TrackingEventComponent</h4>
 
-<TrackingEventListComponent
-    @bind-TrackingEvents=_trackingEvents
-    @bind-Entity="_trackingEventToDelete"    
-    EntityDeleted="OnDeleteEntityAsync"/>
+<TrackingEventListComponent 
+    @bind-TrackingEvents=_trackingEvents 
+    @bind-Entity="_trackingEventToDelete"
+    EntityDeleted="OnDeleteEntityAsync" />
 
 <AddTrackingEventComponent 
-    @bind-TrackingEvent="_trackingEventToAdd"
-    @bind-TrackingEventTypes="_trackingEventTypes" 
-    TrackingEventAdded="OnAddEntityAsync"/>
+    @bind-TrackingEvent="_trackingEventToAdd" 
+    @bind-TrackingEventTypes="_trackingEventTypes"
+    TrackingEventAdded="OnAddEntityAsync" />
 
 @code {
-    private List<TrackingEvent> _trackingEvents;
+    private List<TrackingEventResponse> _trackingEvents;
     private List<TrackingEventTypeModel> _trackingEventTypes;
     private TrackingEvent _trackingEventToDelete;
     private AddTrackingEventModel _trackingEventToAdd = new AddTrackingEventModel();
 
     [Inject]
-    private ITimeTrackingService _timeTrackingService { get; set; }
+    private IMediator _mediator { get; set; }
 
-    protected override async Task OnInitializedAsync()  
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _trackingEvents = (await _timeTrackingService.GetTrackingEventsAsync(CancellationToken.None)).ToList();
-        _trackingEventTypes = (await _timeTrackingService.GetAllTrackingEventTypes(CancellationToken.None)).Select(x => new TrackingEventTypeModel { Id = x.Id, EventType = x.EventType, Description = x.Description }).ToList();      
+        if (firstRender)
+        {
+            _trackingEvents = await _mediator.
+            StateHasChanged();
+        }
     }
 
     private async Task OnAddEntityAsync()
-    {
-        TrackingEventType[] trackingEventTypes = _trackingEventToAdd.EventTypes.Select(x => TrackingEventType.Create(x.Id, x.EventType, x.Description)).ToArray();
-        TrackingEvent trackingEventToAdd = TrackingEvent.Create(Guid.NewGuid(), _trackingEventToAdd.Name, _trackingEventToAdd.Description, trackingEventTypes);
-        TrackingEvent newTrackingEvent = await _timeTrackingService.AddTrakingEventAsync(trackingEventToAdd, CancellationToken.None);
-        _trackingEvents.Add(newTrackingEvent);
+    {        
     }
 
     private async Task OnDeleteEntityAsync()
-    {
-        await _timeTrackingService.DeleteTrackingEventAsync(_trackingEventToDelete.Id, CancellationToken.None);
-        _trackingEvents.Remove(_trackingEventToDelete);
-        _trackingEventToDelete = null;
+    {        
     }
 }
