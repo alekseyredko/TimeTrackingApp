@@ -1,5 +1,6 @@
 ﻿@using Infrastructure.Models
 @using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Infrastructure.Queries.TrackingEvents;
 @using TimeTrackingApp.Models;
 @using MediatR;
 <h4>TrackingEventComponent</h4>
@@ -17,7 +18,7 @@
 @code {
     private List<TrackingEventResponse> _trackingEvents;
     private List<TrackingEventTypeModel> _trackingEventTypes;
-    private TrackingEvent _trackingEventToDelete;
+    private TrackingEventResponse _trackingEventToDelete;
     private AddTrackingEventModel _trackingEventToAdd = new AddTrackingEventModel();
 
     [Inject]
@@ -27,7 +28,7 @@
     {
         if (firstRender)
         {
-            _trackingEvents = await _mediator.
+            _trackingEvents = (await _mediator.Send<IReadOnlyCollection<TrackingEventResponse>>(new TrackingEventsQuery(), CancellationToken.None)).ToList();
             StateHasChanged();
         }
     }
