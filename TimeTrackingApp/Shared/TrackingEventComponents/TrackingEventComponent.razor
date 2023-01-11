@@ -1,6 +1,7 @@
 ﻿@using Infrastructure.Models
 @using TimeTrackingApp.Domain.Entities;
 @using TimeTrackingApp.Infrastructure.Commands.TrackingEvents;
+@using TimeTrackingApp.Infrastructure.Queries.TrackingEventTypes;
 @using TimeTrackingApp.Infrastructure.Queries.TrackingEvents;
 @using TimeTrackingApp.Models;
 @using MediatR;
@@ -30,6 +31,7 @@
         if (firstRender)
         {
             _trackingEvents = (await _mediator.Send<IReadOnlyCollection<TrackingEventDto>>(new TrackingEventsQuery(), CancellationToken.None)).ToList();
+            _trackingEventTypes = (await _mediator.Send<IReadOnlyCollection<TrackingEventTypeDto>>(new TrackingEventTypesQuery(), CancellationToken.None)).Select(x => new TrackingEventTypeModel { Id = x.Id, Description = x.Description, EventType = x.EventType }).ToList();
             StateHasChanged();
         }
     }

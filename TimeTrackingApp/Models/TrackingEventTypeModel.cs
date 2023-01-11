@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
-using System.Text.Json;
-using TimeTrackingApp.Converters;
+﻿using System.Text.Json;
 
 namespace TimeTrackingApp.Models
 {
-    [TypeConverter(typeof(TrackingEventTypeModelConverter))]
     public class TrackingEventTypeModel
     {
         public Guid Id { get; set; }
