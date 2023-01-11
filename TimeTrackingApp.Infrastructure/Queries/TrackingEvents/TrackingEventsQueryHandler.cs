@@ -5,7 +5,7 @@ using TimeTrackingApp.Infrastructure.Models;
 
 namespace TimeTrackingApp.Infrastructure.Queries.TrackingEvents
 {
-    public class TrackingEventsQueryHandler : IRequestHandler<TrackingEventsQuery, IReadOnlyCollection<TrackingEventResponse>>
+    public class TrackingEventsQueryHandler : IRequestHandler<TrackingEventsQuery, IReadOnlyCollection<TrackingEventDto>>
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
@@ -14,18 +14,18 @@ namespace TimeTrackingApp.Infrastructure.Queries.TrackingEvents
             _unitOfWorkFactory = unitOfWorkFactory;
         }
 
-        public async Task<IReadOnlyCollection<TrackingEventResponse>> Handle(TrackingEventsQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<TrackingEventDto>> Handle(TrackingEventsQuery request, CancellationToken cancellationToken)
         {
             IUnitOfWork unitOfWork = await _unitOfWorkFactory.CreateUnitOfWorkAsync(cancellationToken);
 
             IEnumerable<TrackingEvent> trackigEvents = await unitOfWork.TrackingEventRepository.GetListOfEntitiesAsync(cancellationToken, incliudeProperties: nameof(TrackingEvent.TimeTracks));
 
-            return trackigEvents.Select(x => new TrackingEventResponse
+            return trackigEvents.Select(x => new TrackingEventDto
             {
                 Id = x.Id,
                 Name = x.Name,
                 Description = x.Description,
-                TimeTracks = x.TimeTracks.Select(y => new TimeTrackResponse
+                TimeTracks = x.TimeTracks.Select(y => new TimeTrackDto
                 {
                     Id = y.Id,
                     StartTrackTime = y.StartTrackTime,

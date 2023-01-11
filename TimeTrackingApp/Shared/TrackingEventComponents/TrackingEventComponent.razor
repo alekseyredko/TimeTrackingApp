@@ -1,5 +1,6 @@
 ﻿@using Infrastructure.Models
 @using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Infrastructure.Commands.TrackingEvents;
 @using TimeTrackingApp.Infrastructure.Queries.TrackingEvents;
 @using TimeTrackingApp.Models;
 @using MediatR;
@@ -16,9 +17,9 @@
     TrackingEventAdded="OnAddEntityAsync" />
 
 @code {
-    private List<TrackingEventResponse> _trackingEvents;
+    private List<TrackingEventDto> _trackingEvents;
     private List<TrackingEventTypeModel> _trackingEventTypes;
-    private TrackingEventResponse _trackingEventToDelete;
+    private TrackingEventDto _trackingEventToDelete;
     private AddTrackingEventModel _trackingEventToAdd = new AddTrackingEventModel();
 
     [Inject]
@@ -28,16 +29,29 @@
     {
         if (firstRender)
         {
-            _trackingEvents = (await _mediator.Send<IReadOnlyCollection<TrackingEventResponse>>(new TrackingEventsQuery(), CancellationToken.None)).ToList();
+            _trackingEvents = (await _mediator.Send<IReadOnlyCollection<TrackingEventDto>>(new TrackingEventsQuery(), CancellationToken.None)).ToList();
             StateHasChanged();
         }
     }
 
     private async Task OnAddEntityAsync()
-    {        
+    {
+        CreateTrackingEventCommand createTrackingEventCommand = new CreateTrackingEventCommand
+        {
+            Id = Guid.NewGuid(),
+            Name = _trackingEventToAdd.Name,
+            Description = _trackingEventToAdd.Description,
+            TrackingEventTypes = _trackingEventToAdd.EventTypes.Select(x => new TrackingEventTypeDto { Id = x.Id, EventType = x.EventType, Description = x.Description }).ToList()
+        };
+
+        TrackingEventDto createdTrackingEvent = await _mediator.Send<TrackingEventDto>(createTrackingEventCommand, CancellationToken.None);
+        _trackingEvents.Add(createdTrackingEvent);
     }
 
     private async Task OnDeleteEntityAsync()
-    {        
+    {
+        DeleteTrackingEventCommand deleteTrackingEventCommand = new DeleteTrackingEventCommand { Id = _trackingEventToDelete.Id };
+        await _mediator.Send(deleteTrackingEventCommand, CancellationToken.None);
+        _trackingEvents.Remove(_trackingEventToDelete);
     }
 }

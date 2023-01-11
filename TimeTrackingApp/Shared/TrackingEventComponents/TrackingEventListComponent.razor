@@ -36,21 +36,21 @@ else
     private string _eventDescription;
 
     [Parameter]
-    public List<TrackingEventResponse> TrackingEvents { get; set; }
+    public List<TrackingEventDto> TrackingEvents { get; set; }
 
     [Parameter]
-    public TrackingEventResponse Entity { get; set; }
+    public TrackingEventDto Entity { get; set; }
 
     [Parameter]
-    public EventCallback<List<TrackingEventResponse>> TrackingEventsChanged { get; set; }
+    public EventCallback<List<TrackingEventDto>> TrackingEventsChanged { get; set; }
 
     [Parameter]
-    public EventCallback<TrackingEventResponse> EntityChanged { get; set; }
+    public EventCallback<TrackingEventDto> EntityChanged { get; set; }
 
     [Parameter]
     public EventCallback EntityDeleted { get; set; }
    
-    private async Task OnDeleteAsync(TrackingEventResponse trackingEvent)
+    private async Task OnDeleteAsync(TrackingEventDto trackingEvent)
     {
         await EntityChanged.InvokeAsync(trackingEvent);
         await EntityDeleted.InvokeAsync();

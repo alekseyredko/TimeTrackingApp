@@ -1,6 +1,6 @@
 namespace TimeTrackingApp.Infrastructure.Models
 {
-    public class TimeTrackResponse
+    public class TimeTrackDto
     {
         public Guid Id { get; set; }
         public DateTimeOffset StartTrackTime { get; set; }
