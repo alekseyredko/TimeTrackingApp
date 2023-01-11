@@ -5,5 +5,6 @@
         public Guid Id { get; init; }
         public string EventType { get; init; }
         public string? Description { get; init; }
+        public IReadOnlyCollection<TrackingEventDto> TrackingEvents { get; init; }
     }
 }
