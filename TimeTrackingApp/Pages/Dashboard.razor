@@ -1,4 +1,9 @@
 ﻿@page "/dashboard"
+@using MediatR;
+@using TimeTrackingApp.Infrastructure.Models;
+@using TimeTrackingApp.Infrastructure.Queries.TimeTracks;
+@using TimeTrackingApp.Infrastructure.Queries.TrackingEventTypes;
+@using TimeTrackingApp.Infrastructure.Queries.TrackingEvents;
 @using TimeTrackingApp.Shared.TimeTrackComponents
 @using TimeTrackingApp.Shared.TrackingEventComponents
 @using TimeTrackingApp.Shared.TrackingEventTypeComponents
@@ -6,20 +11,50 @@
 <PageTitle>Dashboard</PageTitle>
 
 <div class="container-fill d-flex justify-content-center flex-wrap gap-4">
-    <div class="rounded border flex-fill p-2">
-        <TimeTrackComponent />
-    </div>
+    <CascadingValue Value="@_timeTracks" Name="TimeTracks">
+        <CascadingValue Value="@_trackingEvents" Name="TrackingEvents">
+            <CascadingValue Value="@_trackingEventTypes" Name="TrackingEventTypes">
+                <div class="rounded border flex-fill p-2">
+                    <TimeTrackComponent OnStateHasChanged="OnStateHasChanged"/>
+                </div>
     
-    <div class="rounded border flex-fill p-2">
-        <TrackingEventComponent />
-    </div>
+                <div class="rounded border flex-fill p-2">
+                    <TrackingEventComponent OnStateHasChanged="OnStateHasChanged"/>
+                </div>
 
-    <div class="rounded border flex-fill p-2">
-        <TrackingEventTypeComponent/>
-    </div>         
+                <div class="rounded border flex-fill p-2">
+                    <TrackingEventTypeComponent OnStateHasChanged="OnStateHasChanged" />
+                </div>         
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
 </div>
 
 
 @code {
 
+    private List<TimeTrackDto> _timeTracks;
+
+    private List<TrackingEventDto> _trackingEvents;
+
+    private List<TrackingEventTypeDto> _trackingEventTypes;
+
+    [Inject]
+    IMediator _mediator { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _timeTracks = (await _mediator.Send<IReadOnlyCollection<TimeTrackDto>>(new TimeTracksQuery(), CancellationToken.None)).ToList();
+            _trackingEvents = (await _mediator.Send<IReadOnlyCollection<TrackingEventDto>>(new TrackingEventsQuery(), CancellationToken.None)).ToList();
+            _trackingEventTypes = (await _mediator.Send<IReadOnlyCollection<TrackingEventTypeDto>>(new TrackingEventTypesQuery(), CancellationToken.None)).ToList();
+            StateHasChanged();
+        }
+    }
+
+    private void OnStateHasChanged()
+    {
+        StateHasChanged();
+    }
 }

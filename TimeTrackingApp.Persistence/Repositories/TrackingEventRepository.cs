@@ -10,7 +10,7 @@ namespace TimeTrackingApp.Persistence.Repositories
     internal class TrackingEventRepository : GenericRepository<TrackingEvent>, ITrackingEventRepository
     {      
         public TrackingEventRepository(ApplicationDbContext applicationDbContext): base(applicationDbContext)
-        {         
+        {          
         }
 
         public async Task<TrackingEvent> AddTrackingEventAsync(TrackingEvent trackingEvent, CancellationToken cancellation)

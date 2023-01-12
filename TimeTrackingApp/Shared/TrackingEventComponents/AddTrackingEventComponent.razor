@@ -1,4 +1,5 @@
 ﻿@using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Infrastructure.Models;
 @using TimeTrackingApp.Models;
 
 <div class="container mb-3">
@@ -27,7 +28,7 @@
                 }
             </InputSelect>*@
             <select class="form-select mb-3" multiple @onchange="SelectedItemsChanged">
-                @foreach (TrackingEventTypeModel trackingEventType in TrackingEventTypes)
+                @foreach (TrackingEventTypeModel trackingEventType in _trackingEventTypeModels)
                 {
                     <option value="@trackingEventType">@trackingEventType.EventType</option>
                 }
@@ -39,20 +40,31 @@
 </div>
 
 @code {
+    private List<TrackingEventTypeModel> _trackingEventTypeModels;
+
     [Parameter]
     public AddTrackingEventModel TrackingEvent { get; set; }
 
     [Parameter]
-    public List<TrackingEventTypeModel> TrackingEventTypes { get; set; }
+    public List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
 
     [Parameter]
     public EventCallback<AddTrackingEventModel> TrackingEventChanged { get; set; }
 
     [Parameter]
-    public EventCallback<List<TrackingEventTypeModel>> TrackingEventTypesChanged { get; set; }
+    public EventCallback<List<TrackingEventTypeDto>> TrackingEventTypesChanged { get; set; }
 
     [Parameter]
     public EventCallback TrackingEventAdded { get; set; }
+
+
+    protected override void OnParametersSet()
+    {
+        if (TrackingEventTypes != null)
+        {
+            _trackingEventTypeModels = TrackingEventTypes.Select(x => new TrackingEventTypeModel { Id = x.Id, Description = x.Description, EventType = x.EventType }).ToList();
+        }
+    }
 
     private void SelectedItemsChanged(ChangeEventArgs e)
     {

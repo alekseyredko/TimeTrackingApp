@@ -1,4 +1,4 @@
-﻿@using TimeTrackingApp.Domain.Entities;
+﻿@using TimeTrackingApp.Infrastructure.Models;
 
 <div class="container mb-3">
     <h5 class="mb-3">Add new time track here</h5>
@@ -6,7 +6,7 @@
     @if (TrackingEvents != null)
     {
         <select class="form-select mb-3" @bind="TrackingEventId">
-            @foreach (TrackingEvent trackingEvent in TrackingEvents)
+            @foreach (TrackingEventDto trackingEvent in TrackingEvents)
             {
                 <option value="@trackingEvent.Id">@trackingEvent.Description</option>
             }
@@ -21,13 +21,13 @@
     public Guid TrackingEventId { get; set; }
 
     [Parameter]
-    public List<TrackingEvent> TrackingEvents { get; set; }
+    public List<TrackingEventDto> TrackingEvents { get; set; }
 
     [Parameter]
     public EventCallback<Guid> TrackingEventIdChanged { get; set; }
 
     [Parameter]
-    public EventCallback<List<TrackingEvent>> TrackingEventsChanged { get; set; }
+    public EventCallback<List<TrackingEventDto>> TrackingEventsChanged { get; set; }
 
     [Parameter]
     public EventCallback TimeTrackAdded { get; set; }

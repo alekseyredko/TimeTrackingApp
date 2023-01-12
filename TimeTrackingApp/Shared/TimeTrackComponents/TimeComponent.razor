@@ -1,5 +1,4 @@
-﻿@using TimeTrackingApp.Application.Services.Interfaces;
-@using TimeTrackingApp.Domain.Entities;
+﻿@using TimeTrackingApp.Domain.Entities;
 @using System.Timers;
 @implements IDisposable;
 
@@ -8,10 +7,7 @@
 
 @code {
     private Timer _timer = new Timer(10);
-    private TimeSpan _elapsed;
-
-    [Inject]
-    private ITimeTrackingService TimeTrackingService { get; set; }
+    private TimeSpan _elapsed;    
 
     private bool _show;      
 

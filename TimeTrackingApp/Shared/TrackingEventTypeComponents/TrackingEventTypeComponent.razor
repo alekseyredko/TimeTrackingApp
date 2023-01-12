@@ -1,5 +1,4 @@
 ﻿@using MediatR;
-@using TimeTrackingApp.Application.Services.Interfaces;
 @using TimeTrackingApp.Domain.Entities;
 @using TimeTrackingApp.Infrastructure.Commands.TrackingEventTypes;
 @using TimeTrackingApp.Infrastructure.Models;
@@ -9,41 +8,40 @@
 <h4>TrackingEventTypeComponent</h4>
 
 <TrackingEventTypeListComponent 
-    TrackingEventTypes="_trackingEventTypes"    
+    TrackingEventTypes="TrackingEventTypes"                                
     EntityIdChanged="async id => await OnDeleteAsync(id)"    
     AddTrackingEventTypeModelChanged="OnAddAsync"/>
 
 @code {
-    private List<TrackingEventTypeDto> _trackingEventTypes;    
-
     [Inject]
     private IMediator _mediator { get; set; }
 
     [Inject]
-    private IHostApplicationLifetime _applicationLifetime { get; set; }
+    private IHostApplicationLifetime _applicationLifetime { get; set; }    
 
-    protected override async void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _trackingEventTypes = (await _mediator.Send<IReadOnlyCollection<TrackingEventTypeDto>>(new TrackingEventTypesQuery(), CancellationToken.None)).ToList();
-            StateHasChanged();
-        }
-    }
+    [CascadingParameter(Name = "TrackingEventTypes")]
+    protected List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
+
+    [Parameter]
+    public EventCallback OnStateHasChanged { get; set; }
 
     private async Task OnAddAsync(AddTrackingEventTypeModel addTrackingEventTypeModel)
     {
         CreateTrackingEventTypeCommand createTrackingEventTypeCommand = new CreateTrackingEventTypeCommand { Id = Guid.NewGuid(), Description = addTrackingEventTypeModel.Description, EventType = addTrackingEventTypeModel.EventType };
-
         TrackingEventTypeDto trackingEventTypeDto = await _mediator.Send<TrackingEventTypeDto>(createTrackingEventTypeCommand, CancellationToken.None);
+        TrackingEventTypes.Add(trackingEventTypeDto);
 
-        _trackingEventTypes.Add(trackingEventTypeDto);
+        await OnStateHasChanged.InvokeAsync();
     }
 
     private async Task OnDeleteAsync(Guid id)
     {
         DeleteTrackingEventTypeCommand deleteTrackingEventTypeCommand = new DeleteTrackingEventTypeCommand { Id = id };
         await _mediator.Send(deleteTrackingEventTypeCommand, CancellationToken.None);
-        _trackingEventTypes = _trackingEventTypes.Where(x => x.Id != id).ToList();
+
+        TrackingEventTypeDto trackingEventTypeDto = TrackingEventTypes.First(x => x.Id == id);
+        TrackingEventTypes.Remove(trackingEventTypeDto);
+               
+        await OnStateHasChanged.InvokeAsync();
     }
 }

@@ -1,16 +1,17 @@
-﻿@using TimeTrackingApp.Application.Services.Interfaces;
+﻿@using MediatR;
 @using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Infrastructure.Models;
 
 <h4>TimeTrackComponent</h4>
 
 <TimeComponent @bind-ShowTrackTime="showTrackTime"/>
 
-<ListComponent
-    @bind-Items="timeTracks"
+<ListComponent 
+    @bind-Items="TimeTracks"
     @bind-Item="selectedTimeTrack"
     ItemToDeleteSelected="OnDeleteEntityAsync">
     <ItemHeader>
-        @context.TrackingEvent.Description
+      
     </ItemHeader>
     <ItemContent>
         <div class="container">
@@ -29,51 +30,43 @@ else
 {
     <AddTimeTrackComponent 
         @bind-TrackingEventId="trackingEventId"
-        @bind-TrackingEvents="trackingEvents"
+        @bind-TrackingEvents="TrackingEvents"
         TimeTrackAdded="OnAddEntityAsync" />
 }
 
 @code {
-    private bool showTrackTime;
-
-    private List<TimeTrack> timeTracks;
+    private bool showTrackTime;    
 
     private Guid trackingEventId;
 
-    private TimeTrack selectedTimeTrack;
-
-    private List<TrackingEvent> trackingEvents;
+    private TimeTrackDto selectedTimeTrack;    
 
     [Inject]
-    private ITimeTrackingService TimeTrackingService { get; set; }
+    private IMediator _mediator { get; set; }
+    
+    [CascadingParameter(Name = "TimeTracks")]
+    protected List<TimeTrackDto> TimeTracks { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        timeTracks = await TimeTrackingService.GetFinishedTimeTracksAsync(CancellationToken.None);
-        trackingEvents = await TimeTrackingService.GetTrackingEventsAsync(CancellationToken.None);
-        await base.OnInitializedAsync();
-    }  
+    [CascadingParameter(Name = "TrackingEvents")]
+    protected List<TrackingEventDto> TrackingEvents { get; set; }
 
+    [Parameter]
+    public EventCallback OnStateHasChanged { get; set; }
+   
     private async Task OnAddEntityAsync()
-    {
-        TimeTrack newTimeTrack = await TimeTrackingService.StartTimeTrackAsync(trackingEventId, DateTimeOffset.Now, CancellationToken.None);
-        timeTracks.Add(newTimeTrack);
-
+    {    
         showTrackTime = true;
     }
 
     private async Task OnDeleteEntityAsync()
-    {
-        await TimeTrackingService.DeleteTimeTrackAsync(selectedTimeTrack.Id, CancellationToken.None);
-        timeTracks.Remove(selectedTimeTrack);
+    {        
+        TimeTracks.Remove(selectedTimeTrack);
+
+        await OnStateHasChanged.InvokeAsync();
     }
 
     private async Task OnStopTimeTrackAsync()
-    {
-        TimeTrack stoppedTimeTrack = await TimeTrackingService.StopCurrentTimeTrackAsync(DateTimeOffset.Now, CancellationToken.None);
-        TimeTrack foundTimeTrack = timeTracks.First(x => x.Id == stoppedTimeTrack.Id);
-        foundTimeTrack = stoppedTimeTrack;
-
+    {              
         showTrackTime = false;
     }
 }
