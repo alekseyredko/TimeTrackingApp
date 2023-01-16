@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TimeTrackingApp.Application.Services;
-using TimeTrackingApp.Application.Services.Interfaces;
 using TimeTrackingApp.Infrastructure;
 using TimeTrackingApp.Infrastructure.Extensions;
 using TimeTrackingApp.Services;
@@ -13,14 +11,13 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-//builder.Services.AddUnitOfWorkFactory(builder.Configuration);
-builder.Services.AddInMemoryUnitOfWorkFactory(builder.Configuration);
-builder.Services.AddTransient<ITimeTrackingService, TimeTrackingService>();
+builder.Services.AddUnitOfWorkFactory(builder.Configuration);
+//builder.Services.AddInMemoryUnitOfWorkFactory(builder.Configuration);
 
 builder.Services.AddDbContext<IdentityContext>(options =>
 {
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
-    options.UseInMemoryDatabase("IdentityDb");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
+    //options.UseInMemoryDatabase("IdentityDb");
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>

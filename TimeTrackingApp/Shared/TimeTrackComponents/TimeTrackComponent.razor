@@ -1,17 +1,19 @@
 ﻿@using MediatR;
 @using TimeTrackingApp.Domain.Entities;
+@using TimeTrackingApp.Infrastructure.Commands.TimeTracks;
 @using TimeTrackingApp.Infrastructure.Models;
 
 <h4>TimeTrackComponent</h4>
 
-<TimeComponent @bind-ShowTrackTime="showTrackTime"/>
+<TimeComponent 
+    @bind-ShowTrackTime="showTrackTime"/>
 
 <ListComponent 
     @bind-Items="TimeTracks"
     @bind-Item="selectedTimeTrack"
     ItemToDeleteSelected="OnDeleteEntityAsync">
     <ItemHeader>
-      
+      <p>@context.IsFinished</p>
     </ItemHeader>
     <ItemContent>
         <div class="container">
@@ -30,7 +32,8 @@ else
 {
     <AddTimeTrackComponent 
         @bind-TrackingEventId="trackingEventId"
-        @bind-TrackingEvents="TrackingEvents"
+        @bind-TrackingEvents="TrackingEvents"      
+        @bind-StartTrackTime="_startDateTime"
         TimeTrackAdded="OnAddEntityAsync" />
 }
 
@@ -39,34 +42,64 @@ else
 
     private Guid trackingEventId;
 
+    private DateTimeOffset? _startDateTime;
+
     private TimeTrackDto selectedTimeTrack;    
 
     [Inject]
     private IMediator _mediator { get; set; }
-    
-    [CascadingParameter(Name = "TimeTracks")]
-    protected List<TimeTrackDto> TimeTracks { get; set; }
-
-    [CascadingParameter(Name = "TrackingEvents")]
-    protected List<TrackingEventDto> TrackingEvents { get; set; }
 
     [Parameter]
-    public EventCallback OnStateHasChanged { get; set; }
-   
+    public List<TimeTrackDto> TimeTracks { get; set; }
+
+    [Parameter]
+    public EventCallback<List<TimeTrackDto>> TimeTracksChanged { get; set; }
+
+    [Parameter]
+    public List<TrackingEventDto> TrackingEvents { get; set; }
+
+    [Parameter]
+    public EventCallback<List<TrackingEventDto>> TrackingEventsChanged { get; set; }
+
+
     private async Task OnAddEntityAsync()
-    {    
+    {
         showTrackTime = true;
+        StartTimeTrackCommand startTimeTrackCommand = new StartTimeTrackCommand { TrackingEventId = trackingEventId, TimeTrackStartTime = _startDateTime.Value };
+        TrackingEventDto trackingEvent = await _mediator.Send<TrackingEventDto>(startTimeTrackCommand, CancellationToken.None);
+
+        ReplaceElement(trackingEvent, TrackingEvents);
+
+        TimeTracks.Add(trackingEvent.TimeTracks.First(x => !x.IsFinished));
+
+        await TrackingEventsChanged.InvokeAsync(TrackingEvents);
+        await TimeTracksChanged.InvokeAsync(TimeTracks);
     }
 
     private async Task OnDeleteEntityAsync()
     {        
         TimeTracks.Remove(selectedTimeTrack);
 
-        await OnStateHasChanged.InvokeAsync();
+        await TimeTracksChanged.InvokeAsync(TimeTracks);
     }
 
     private async Task OnStopTimeTrackAsync()
-    {              
+    {                      
         showTrackTime = false;
+        StopTimeTrackCommand stopTimeTrackCommand = new StopTimeTrackCommand { TimeTrackStopTime = DateTimeOffset.Now };
+        TrackingEventDto trackingEvent = await _mediator.Send<TrackingEventDto>(stopTimeTrackCommand, CancellationToken.None);
+
+        ReplaceElement(trackingEvent, TrackingEvents);
+
+        await TrackingEventsChanged.InvokeAsync(TrackingEvents);
+        ReplaceElement(trackingEvent.TimeTracks.Last(), TimeTracks);
+        await TimeTracksChanged.InvokeAsync(TimeTracks);
+    }
+
+    private void ReplaceElement<T>(T element, List<T> elements) where T: Dto
+    {
+        int index = elements.IndexOf(elements.Find(x => x.Id == element.Id));
+        elements.RemoveAt(index);
+        elements.Insert(index, element);
     }
 }

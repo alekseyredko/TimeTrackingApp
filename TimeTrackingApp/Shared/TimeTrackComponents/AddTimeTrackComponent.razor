@@ -32,9 +32,16 @@
     [Parameter]
     public EventCallback TimeTrackAdded { get; set; }
 
+    [Parameter]
+    public DateTimeOffset? StartTrackTime { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTimeOffset?> StartTrackTimeChanged { get; set; }
+
     public async Task OnAddEntityAsync()
     {       
         await TrackingEventIdChanged.InvokeAsync(TrackingEventId);
+        await StartTrackTimeChanged.InvokeAsync(DateTimeOffset.Now);
         await TimeTrackAdded.InvokeAsync();
     }
 }

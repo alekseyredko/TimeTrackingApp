@@ -19,11 +19,11 @@
     [Inject]
     private IHostApplicationLifetime _applicationLifetime { get; set; }    
 
-    [CascadingParameter(Name = "TrackingEventTypes")]
-    protected List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
+    [Parameter]
+    public List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
 
     [Parameter]
-    public EventCallback OnStateHasChanged { get; set; }
+    public EventCallback<List<TrackingEventTypeDto>> TrackingEventTypesChanged { get; set; } 
 
     private async Task OnAddAsync(AddTrackingEventTypeModel addTrackingEventTypeModel)
     {
@@ -31,7 +31,7 @@
         TrackingEventTypeDto trackingEventTypeDto = await _mediator.Send<TrackingEventTypeDto>(createTrackingEventTypeCommand, CancellationToken.None);
         TrackingEventTypes.Add(trackingEventTypeDto);
 
-        await OnStateHasChanged.InvokeAsync();
+        await TrackingEventTypesChanged.InvokeAsync(TrackingEventTypes);
     }
 
     private async Task OnDeleteAsync(Guid id)
@@ -42,6 +42,6 @@
         TrackingEventTypeDto trackingEventTypeDto = TrackingEventTypes.First(x => x.Id == id);
         TrackingEventTypes.Remove(trackingEventTypeDto);
                
-        await OnStateHasChanged.InvokeAsync();
+        await TrackingEventTypesChanged.InvokeAsync(TrackingEventTypes);
     }
 }

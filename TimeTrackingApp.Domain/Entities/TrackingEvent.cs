@@ -63,17 +63,16 @@ public class TrackingEvent : BaseEntity
 
     public void StartTimeTrack(DateTimeOffset startDateTimeOffset)
     {
-        //TODO: finish previous timetrack?
-        //TODO: use guid instead of id?
+        //TODO: finish previous timetrack?        
         TimeTrack timeTrack = TimeTrack.Create(Guid.NewGuid(), startDateTimeOffset, this);
         _timeTracks.Add(timeTrack);
-        IsTracking= true;
+        IsTracking = true;
     }
 
     public void StopCurentTimeTrack(DateTimeOffset stopDateTimeOffset)
     {
         TimeTrack timeTrackToFinish = _timeTracks.First(timeTrack => !timeTrack.IsFinished);
         timeTrackToFinish.StopTimeTrack(stopDateTimeOffset);
-        IsTracking= false;
+        IsTracking = false;
     }
 }

@@ -11,23 +11,20 @@
 <PageTitle>Dashboard</PageTitle>
 
 <div class="container-fill d-flex justify-content-center flex-wrap gap-4">
-    <CascadingValue Value="@_timeTracks" Name="TimeTracks">
-        <CascadingValue Value="@_trackingEvents" Name="TrackingEvents">
-            <CascadingValue Value="@_trackingEventTypes" Name="TrackingEventTypes">
-                <div class="rounded border flex-fill p-2">
-                    <TimeTrackComponent OnStateHasChanged="OnStateHasChanged"/>
-                </div>
-    
-                <div class="rounded border flex-fill p-2">
-                    <TrackingEventComponent OnStateHasChanged="OnStateHasChanged"/>
-                </div>
-
-                <div class="rounded border flex-fill p-2">
-                    <TrackingEventTypeComponent OnStateHasChanged="OnStateHasChanged" />
-                </div>         
-            </CascadingValue>
-        </CascadingValue>
-    </CascadingValue>
+    <div class="rounded border flex-fill p-2">
+        <TimeTrackComponent 
+            @bind-TimeTracks="_timeTracks"
+            @bind-TrackingEvents="_trackingEvents"/>
+    </div>
+    <div class="rounded border flex-fill p-2">
+        <TrackingEventComponent 
+            @bind-TrackingEvents="_trackingEvents"
+            @bind-TrackingEventTypes="_trackingEventTypes"/>
+    </div>
+    <div class="rounded border flex-fill p-2">
+        <TrackingEventTypeComponent 
+            @bind-TrackingEventTypes="_trackingEventTypes"/>
+    </div>
 </div>
 
 
@@ -51,10 +48,5 @@
             _trackingEventTypes = (await _mediator.Send<IReadOnlyCollection<TrackingEventTypeDto>>(new TrackingEventTypesQuery(), CancellationToken.None)).ToList();
             StateHasChanged();
         }
-    }
-
-    private void OnStateHasChanged()
-    {
-        StateHasChanged();
-    }
+    }   
 }

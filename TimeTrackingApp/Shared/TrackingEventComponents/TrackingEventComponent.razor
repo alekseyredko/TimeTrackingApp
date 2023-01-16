@@ -24,14 +24,17 @@
     [Inject]
     private IMediator _mediator { get; set; }
 
-    [CascadingParameter(Name = "TrackingEvents")]
-    protected List<TrackingEventDto> TrackingEvents { get; set; }
-
-    [CascadingParameter(Name = "TrackingEventTypes")]
-    protected List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
+    [Parameter]
+    public List<TrackingEventDto> TrackingEvents { get; set; }
 
     [Parameter]
-    public EventCallback OnStateHasChanged { get; set; }
+    public EventCallback<List<TrackingEventDto>> TrackingEventsChanged { get; set; }
+
+    [Parameter]
+    public List<TrackingEventTypeDto> TrackingEventTypes { get; set; }
+
+    [Parameter]
+    public EventCallback<List<TrackingEventTypeDto>> TrackingEventTypesChanged { get; set; }
 
     private async Task OnAddEntityAsync()
     {
@@ -44,9 +47,9 @@
         };
 
         TrackingEventDto createdTrackingEvent = await _mediator.Send<TrackingEventDto>(createTrackingEventCommand, CancellationToken.None);
-        TrackingEvents.Add(createdTrackingEvent);        
+        TrackingEvents.Add(createdTrackingEvent);
 
-        await OnStateHasChanged.InvokeAsync();
+        await TrackingEventsChanged.InvokeAsync(TrackingEvents);
     }
 
     private async Task OnDeleteEntityAsync()
@@ -55,6 +58,6 @@
         await _mediator.Send(deleteTrackingEventCommand, CancellationToken.None);
         TrackingEvents.Remove(_trackingEventToDelete);
 
-        await OnStateHasChanged.InvokeAsync();
+        await TrackingEventsChanged.InvokeAsync(TrackingEvents);
     }
 }

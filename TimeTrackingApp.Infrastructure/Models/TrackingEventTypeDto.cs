@@ -1,10 +1,9 @@
 ﻿namespace TimeTrackingApp.Infrastructure.Models
 {
-    public class TrackingEventTypeDto
-    {
-        public Guid Id { get; init; }
+    public class TrackingEventTypeDto: Dto
+    {       
         public string EventType { get; init; }
         public string? Description { get; init; }
-        public IReadOnlyCollection<TrackingEventDto> TrackingEvents { get; init; }
+        public ICollection<TrackingEventDto> TrackingEvents { get; init; } = new List<TrackingEventDto>();
     }
 }
