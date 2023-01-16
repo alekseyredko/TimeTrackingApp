@@ -38,8 +38,11 @@
     {             
         if (start)
         {
-            _timer.Elapsed += OnTimerCallback;
-            _timer.Start();
+            if (!_timer.Enabled)
+            {                
+                _timer.Elapsed += OnTimerCallback;
+                _timer.Start();
+            }
         }
         else
         {
