@@ -11,14 +11,26 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddUnitOfWorkFactory(builder.Configuration);
-//builder.Services.AddInMemoryUnitOfWorkFactory(builder.Configuration);
+bool? usePersistentDatabase = builder.Configuration.GetValue<bool?>("usePersistentDatabase");
 
-builder.Services.AddDbContext<IdentityContext>(options =>
+if (usePersistentDatabase.HasValue && usePersistentDatabase.Value)
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
-    //options.UseInMemoryDatabase("IdentityDb");
-});
+    builder.Services.AddUnitOfWorkFactory(builder.Configuration);    
+
+    builder.Services.AddDbContext<IdentityContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityContext"));
+    });
+}
+else
+{
+    builder.Services.AddInMemoryUnitOfWorkFactory(builder.Configuration);
+
+    builder.Services.AddDbContext<IdentityContext>(options =>
+    {
+        options.UseInMemoryDatabase("IdentityDb");
+    });
+}
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
