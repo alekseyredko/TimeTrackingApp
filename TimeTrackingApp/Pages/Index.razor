@@ -19,20 +19,15 @@
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationStateTask{ get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
-        {
-            AuthenticationState authenticationState = await AuthenticationStateTask;            
+        AuthenticationState authenticationState = await AuthenticationStateTask;
 
-            if(authenticationState.User.Identity.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("/dashboard");
-            }
-        }
-        catch (Exception)
+        if (authenticationState.User.Identity.IsAuthenticated)
         {
-
+            NavigationManager.NavigateTo("/dashboard");
         }
-    }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }  
 }
